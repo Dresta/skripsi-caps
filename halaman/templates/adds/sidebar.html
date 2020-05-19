@@ -1,0 +1,15 @@
+<div class="sidenav">
+    {% comment %} <svg width="69" height="72" viewBox="0 0 69 72" fill="none" xmlns="http://www.w3.org/2000/svg"
+    style="float:left;">
+        <circle opacity="0.5" cx="47.5765" cy="21.1546" r="21.1546" fill="#DF4C4C"/>
+            <circle opacity="0.5" cx="29.391" cy="43.4969" r="28.5031" fill="#0CC540"/>
+    </svg> {% endcomment %}
+    <h5>Sistem presensi dan monitoring mahasiswa</h5>
+    <br><br>
+    {% if request.user.is_staff %}
+        <a href="{% url 'daftar' %}" class="{{hal_daftar}}">Buat Akun</a>
+    {% endif %}
+    <a href="{% url 'dashboard' %}" class="{{hal_dashboard}}">Dashboard</a>
+    <a href="{% url 'daftarMahasiswa' %}" class="{{hal_daftarMahasiswa}}">Mahasiswa</a>
+    <a href="{% url 'rekap' %}" class="{{hal_rekap}}">Rekapitulasi</a>
+</div>

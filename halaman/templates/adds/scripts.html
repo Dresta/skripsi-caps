@@ -1,0 +1,46 @@
+<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+<script src= "https://cdnjs.cloudflare.com/ajax/libs/axios/0.19.2/axios.min.js"></script>
+
+<script>
+
+    $(document).ready(function(){
+        axios
+        .get('http://jsonplaceholder.typicode.com/users')
+        .then(response => {
+            response.data.forEach(element =>{
+                tampilkanPresensi(element)
+            });
+        })
+        .catch(err => console.log(err));
+    });
+
+    function tampilkanPresensi(element){
+        var daftar = document.createTextNode('');
+        var status = document.createTextNode('');
+        
+        var statusKehadiran = document.createElement("div");
+        var daftarKehadiran = document.createElement("div");
+
+        statusKehadiran.appendChild(status);
+        daftarKehadiran.appendChild(daftar);
+
+        statusKehadiran.innerHTML = ""
+        daftarKehadiran.innerHTML = element.name + "<hr>"
+
+        daftarKehadiran.className = 'py-2 col-md-9'
+        if (element.id % 2){
+            statusKehadiran.className = 'mr-3 py-2 col-md-2 float-right bg-success'
+        }else{
+            statusKehadiran.className = 'mr-3 py-2 col-md-2 float-right bg-danger'
+        }
+
+
+        var kehadiran = document.getElementById("kehadiran");
+        kehadiran.appendChild(statusKehadiran);
+        kehadiran.appendChild(daftarKehadiran);
+        
+    } 
+
+</script>

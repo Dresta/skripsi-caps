@@ -1,0 +1,52 @@
+{% extends 'base.html' %}
+
+{% block header %}
+    Dashboard Dosen
+{% endblock header %}
+
+{% block content %}
+<div class="card">
+    <div class="card-body">
+        <br><h5 class="card-title text-center">Informasi Perkuliahan</h5> <br>
+        <div class="scrollable">
+            <div class="konten">
+                <center>
+                    <form method="POST" >
+                        {% csrf_token %}
+                        <table cellpadding='8'>
+                        <tr>
+                            <td>Waktu Pelaksanaan </td>
+                            <td> : {% now 'j F Y' %}</td>
+                        </tr>
+                        <tr>
+                            <td>Nama Mata Kuliah </td>
+                            <td> {{form_pertemuan.as_ul}}</td>
+                        </tr>
+                        <tr>
+                            <td>Kode Mata Kuliah </td>
+                            <td> : {{user.profil.kode}}</td>
+
+                        </tr>
+                        <tr>
+                            <td>Ruang kelas </td>
+                            <td> : {{user.profil.ruang }}</td>
+                        </tr>
+                        </table>
+                        <br><br>
+                        
+                        <button type="submit" class="btn btn-success" 
+                        id="btn_mulai" action="{% url 'aktivitas' %}">
+                        Mulai Perkuliahan 
+                        </button> 
+                    </form>
+                </center>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock content %}
+
+{% block script %}
+    {% include 'adds/scripts.html' %}
+{% endblock script %}
+

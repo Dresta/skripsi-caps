@@ -1,0 +1,90 @@
+{% extends 'base.html' %}
+
+{% block kembali %} 
+    <a href="{% url 'daftarMahasiswa' %}" 
+    class="kembali"> < Kembali </a>
+{% endblock kembali %}
+
+{% block header %}
+    Detail Kehadiran Mahasiswa
+{% endblock header %}
+
+{% block content %}
+    <div class="card">
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-8"> 
+                    <table class="table">
+                        <thead class="thead-dark">
+                            <tr>
+                                <th>Informasi Umum</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tr>
+                            <td>Nama</td>
+                            <td>: {{mahasiswa.nama}}</td>
+                        </tr>
+                        <tr>
+                            <td>NIM</td>
+                            <td>: {{mahasiswa.nim}}</td>
+                        </tr>
+                        <tr>
+                            <td>Angkatan</td>
+                            <td>: {{mahasiswa.angkatan}}</td>
+                        </tr>
+                        <tr>
+                            <td>Program Studi</td>
+                            <td>: {{mahasiswa.program_studi}}</td>
+                        </tr>
+                    </table>    
+                </div>
+                <div class="col-md-4">
+                    <table class="table">
+                    <thead class="thead-dark">
+                        <tr>
+                            <th>Rekap Kehadiran</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tr>
+                        <td>Tepat Waktu</td>
+                        <td>{{jumlah_hadir}}</td>
+                    </tr>
+                    <tr>
+                        <td>Terlambat</td>
+                        <td>{{jumlah_terlambat}}</td>
+                    </tr>
+                    <tr>
+                        <td>Absen</td>
+                        <td>{{jumlah_absen}}</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Kehadiran</strong></td>
+                        <td><strong> {{total_kehadiran}} / {{presensi.count}}</strong></td>
+                    </tr>
+                    </table>
+                </div>
+            </div>
+            <br>
+            <div class="row">
+                <div class="col-md-12 scrollable">
+                    <table class="table">
+                        <thead class="thead-dark">
+                            <tr>
+                                <th width="60%">Pelaksanaan Perkuliahan</th>
+                                <th width="40%">Status</th>
+                            </tr>
+                        </thead>
+                        {% for presensi in presensi %}
+                            <tr>
+                                <td>{{presensi.waktu_kehadiran}}</td>
+                                <td>{{presensi.status}}</td>
+                            </tr>
+                        {% endfor %}
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock content %}

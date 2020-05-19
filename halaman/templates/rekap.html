@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+
+{% block header %}
+    Rekapitulasi Data Presensi
+{% endblock header %}
+
+{% block content %}
+<div class="card">
+    <div class="card-body scrollable">
+        <br><h4>Pertemuan Kuliah {{user.profil.nama}}</h4> <br>
+        {% for pertemuan in pertemuan %}
+            <div class="center pertemuan-container col-md-10">
+                <div class="row mx-1 my-2">
+                    <table>
+                        <tr>
+                            <td class="count col-md-1 h2 py-2 px-3 nomor">
+                            </td>
+                            <td class="col-md-2 my-auto ">
+                                <a href="{% url 'rekapDetail' pertemuan.id %}" class="btn btn-outline-info"
+                                style="float: right;">Detail</a>
+                            </td>
+                            <td class="col-md-2 my-auto">
+                                <a href="#" style="float: right;">
+                                Download</a>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock content %}
+{% block script %}
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+
+    <script>
+        var list = document.getElementsByClassName("count");
+        for (var i = 1  ; i <= list.length; i++) {
+            list[i-1].innerHTML = i;
+        }
+
+    </script>
+{% endblock script%}

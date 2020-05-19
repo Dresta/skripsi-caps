@@ -1,0 +1,60 @@
+<html>
+    <head>
+        <title></title>
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" 
+        integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+    </head>
+
+    <body>
+        <div class="row h-100 w-100">
+            <div class="col-5" style="background-color:lightgray;">            
+                <br><h2>Sistem Monitoring dan Presensi Mahasiswa</h2>
+                <center>
+                    <svg viewBox="0 0 69 72" fill="none" xmlns="http://www.w3.org/2000/svg"
+                    style=" margin-top:20%; max-width:300;" >
+                        <circle opacity="0.5" cx="47.5765" cy="21.1546" r="21.1546" fill="#DF4C4C"/>
+                        <circle opacity="0.5" cx="29.391" cy="43.4969" r="28.5031" fill="#0CC540"/>
+                    </svg>
+                </center>
+            </div>
+
+            <div class="col-7">
+                <div class="login" style="position:absolute; padding:25vh 35vh;">
+                    <div>
+                        <center>
+                        {% if messages %}
+                            <ul class="messages">
+                                {% for message in messages %}
+                                <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+                                {% endfor %}
+                            </ul>
+                        {% endif %}
+                        </center>
+                        <h2><b>Log</b>in</h2>
+                            <center>
+                                <form method="POST" action="">
+                                {% csrf_token %}
+                                    <input type="text" name="username" placeholder="username..." 
+                                    class="form-control">
+                                    <br>
+                                    <input type="password" name="password" placeholder="password..." 
+                                    class="form-control">
+                                    <br>
+                                    <button type="submit" class="btn btn-primary btn-block">Masuk</button>
+                                    <br>
+                                    <p style="font-size:2vh">Jika belum memiliki akun, silahkan 
+                                    hubungi Pihak Akademik</p>
+                                </form>
+                            </center>  
+                    </div>
+                </div>
+            </div>
+        </div>
+    </body>
+
+<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.19.2/axios.min.js"></script>
+
+</html>

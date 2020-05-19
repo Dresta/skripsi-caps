@@ -1,0 +1,53 @@
+<html>
+    <head>
+        <title></title>
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" 
+        integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+        
+    {% block head %}
+        {% load static %}
+        <link rel="stylesheet" href="{% static 'style.css' %}" type="text/css">
+    {% endblock head %}
+    
+    </head>
+
+    <body>
+        <div class="main">
+            <div class="row">
+                <div class="col-md-2">
+                {% block sidebar %}
+                    {% include 'adds/sidebar.html' %}
+                {% endblock sidebar %}
+                </div>
+
+                <div class="col-md-10">
+                    <div class="row"> 
+                        <div class="col-md-12">
+                            <nav class="navbar navbar-expand-lg">
+                                {% block kembali %} {% endblock kembali %}
+                                <p class="navbar-brand"> <strong>
+                                {% block header %} {% endblock header %}
+                                </strong></p>
+                                <div class="btn-group navbar-right">
+                                    <button class="btn btn-secondary btn-sm dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                        {{request.user}}
+                                    </button>
+                                    <div class="dropdown-menu dropdown-menu-right">
+                                        <a class="dropdown-item" href="#">Edit Perkuliahan</a>
+                                        <a class="dropdown-item"href="{% url 'keluar' %}">Keluar</a>
+                                    </div>
+                                </div>
+                            </nav> 
+                        </div>
+                        <div class="col-md-12">    
+                            {% block content %}     
+                            {% endblock content %} 
+                        </div>
+                    </div>
+                </div>
+            </div>     
+        </div>
+    </body>
+    {% block script %}
+    {% endblock script %}
+</html>

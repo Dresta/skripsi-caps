@@ -1,0 +1,95 @@
+<html>
+    <head>
+        <title></title>
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" 
+        integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+        
+    {% block head %}
+        {% load static %}
+        <link rel="stylesheet" href="{% static 'style.css' %}" type="text/css">
+    {% endblock head %}
+    </head>
+
+    {% load crispy_forms_tags %}
+
+    <body>
+        <div class="main">
+            <div class="row mx-auto"> 
+                <div class="col-md-12">
+                    <nav class="navbar navbar-expand-lg">
+                        {% block kembali %} {% endblock kembali %}
+                        <p class="navbar-brand"> <strong>
+                        Pantau Aktivitas Kehadiran Mahasiswa
+                        </strong></p>
+                    </nav> 
+                </div>
+            </div>
+
+            <div class="row mx-auto">
+                <div class="col-md-4">
+                    <div class="card">
+                        <div class="card-body listpad">
+                            <h5 class="ml-3">Kehadiran Mahasiswa</h5> <br>
+                            <form method="POST" enctype="multipart/form-data">
+                                {% csrf_token %}
+                                <label> Upload mp4 file</label>
+                                {{form.deskripsi_video}}
+                                {{form.videofile}}
+                                <br>
+                                <label> Upload a CSV File </label>
+                                <input type="file" name="file"> <br>
+                                <br>
+                                {% comment %} {{form|crispy}} {% endcomment %}
+                                <button type="sumbit">Upload</button>
+                            </form>
+                            <hr>
+                            
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-8">
+                    <div class="card">
+                        <div class="card-body">
+                        <div class="row">
+                            <table class="col-md-12">
+                                <tr class="col-md-5">
+                                {% comment %} <form method="POST" enctype="multipart/form-data">
+                                    {% csrf_token %}
+                                    <br>
+                                    <label> Upload a CSV File </label>
+                                    <input type="file" name="file"> <br>
+                                    <br>
+                                    <button type="sumbit">Upload</button>
+                                </form> {% endcomment %}
+                                    <th> Deskripsi Video
+                                    </th>
+                                    <th> Link Video
+                                    </th>
+                                </tr>
+                                {% for video in videos%}
+                                <tr class="col-md-7">
+                                    <td>
+                                        {{video.deskripsi_video}}
+                                    </td>
+                                    
+                                    <td>
+                                        http://127.0.0.1:8000/halaman/media/{{video.videofile}}
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </table>
+                        </div>
+                            
+{% comment %}                             
+                            nampilin video disini
+ {% endcomment %}
+                        </div>
+                    </div>
+                </div>
+            </div>  
+        </div>
+    </body>
+    {% block script %}
+    {% endblock script %}
+</html>
