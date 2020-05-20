@@ -19,8 +19,10 @@
                             <td> : {% now 'j F Y' %}</td>
                         </tr>
                         <tr>
-                            <td>Nama Mata Kuliah </td>
-                            <td> {{form_pertemuan.as_ul}}</td>
+                            <td>
+                            <label for="nama">Nama Mata Kuliah</label>
+                            </td>
+                            <td> : {{user.profil.nama}}</td>
                         </tr>
                         <tr>
                             <td>Kode Mata Kuliah </td>
@@ -47,6 +49,5 @@
 {% endblock content %}
 
 {% block script %}
-    {% include 'adds/scripts.html' %}
 {% endblock script %}
 

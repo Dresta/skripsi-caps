@@ -30,14 +30,13 @@ class Mahasiswa(models.Model):
 
 class Pertemuan(models.Model):
     matkul = models.ForeignKey(Profil, on_delete=models.CASCADE, related_name='pertemuan')
-    intensitas = models.IntegerField(default=1)
 
     def save(self, *args, **kwargs):
         self.intensitas = Pertemuan.objects.count()
         super(Pertemuan, self).save(*args, **kwargs)
 
     def __str__(self):
-        return 'pertemuan ke %s mata kuliah %s'  % (self.intensitas + 1, self.matkul.nama)
+        return 'id pertemuan %s mata kuliah %s'  % (self.id , self.matkul.nama)
 
 class Presensi(models.Model):
     mahasiswa = models.ForeignKey(Mahasiswa, on_delete=models.CASCADE)
@@ -46,7 +45,7 @@ class Presensi(models.Model):
     status = models.CharField(max_length=10, blank=True)
 
     def __str__(self):
-        return ' %s pertemuan ke %s %s' % ( self.mahasiswa.niu, self.pertemuan.intensitas + 1, self.pertemuan.matkul.nama,) 
+        return ' %s id pertemuan %s %s' % ( self.mahasiswa.niu, self.pertemuan.id, self.pertemuan.matkul.nama,) 
 
 class Video(models.Model):
     deskripsi_video = models.CharField(max_length=500)

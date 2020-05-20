@@ -10,6 +10,7 @@ from django.contrib.auth.forms import UserCreationForm
 
 from .decorators import unauthenticated_user
 
+from django.contrib.auth.models import User
 from .models import Profil, Mahasiswa, Presensi, Pertemuan, Video, UploadCSV
 from .forms import PertemuanForm, ProfilForm, VideoForm
 
@@ -60,20 +61,22 @@ def daftar(request):
 
 @login_required(login_url='masuk')
 def dataAkun(request):
-    dataform = ProfilForm(request.POST)
+    last_user = User.objects.all().last()
 
     if request.method == 'POST':
-        dataform = ProfilForm(request.POST)
-        if dataform.is_valid():
-            dataform.save()
-            
-            dataform = ProfilForm()
-            return redirect('daftar')
-    else:
-        dataform = ProfilForm()
+        data = request.POST
+        last_id = last_user.pk
+        profil = Profil.objects.create(
+            user_id = last_id,
+            kode = data['kode'],
+            nama = data['matkul'],
+            ruang = data['ruang'])
+
+        profil.save()
+        return redirect('dashboard')
         
     context={
-        'dataform' : dataform,
+        'last_user' : last_user,
     }
     return render(request, 'data_akun.html', context)
 
@@ -87,22 +90,18 @@ def dashboard(request):
     profil = Profil.objects.all()
 
     if request.method == "POST":    
-        form_pertemuan = PertemuanForm(request.POST)
-        if form_pertemuan.is_valid():
-            n = form_pertemuan.cleaned_data["matkul"]
-            t = Pertemuan (matkul = n)
-            t.save()
-            request.user.profil.pertemuan.add(t)
-
+        data = request.POST
+        matkul_id = request.user.profil.id
+        pertemuan = Pertemuan.objects.create(matkul_id=matkul_id)
+        if pertemuan:
             return redirect('aktivitas')
-    else:
-        form_pertemuan = PertemuanForm()
+        else:
+            return HttpResponse("Pertemuan tidak terselenggara")
 
     context = {
         'nama_matkul' : nama_matkul,
         "hal_dashboard" : "active",
         'profil' : profil, 
-        'form_pertemuan':form_pertemuan,
     }
     return render (request, 'dashboard.html', context)
     
