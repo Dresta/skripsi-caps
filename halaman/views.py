@@ -14,6 +14,9 @@ from django.contrib.auth.models import User
 from .models import Profil, Mahasiswa, Presensi, Pertemuan, Video, UploadCSV
 from .forms import PertemuanForm, ProfilForm, VideoForm
 
+from rest_framework import viewsets
+from .serializers import *
+
 # Create your views here.
 @unauthenticated_user
 def masuk(request):
@@ -208,59 +211,45 @@ def video(request):
             form.save()
     else:
         form = VideoForm()
-    
-    # if request.method == "GET":
-    #     return render(request, 'video.html')
-
-    # csv_file = request.FILES.get("file", None)
-
-    # if not csv_file.name.endswith(".csv"):
-    #     messages.error(request, 'File yang dimasukkan bukan csv')
-    
-    # data_set = csv_file.read().decode('UTF-8')
-    # io_string = io.StringIO(data_set)
-    # next(io_string)
-    # for column in csv.reader(io_string, delimiter=",", quotechar="|"):
-    #     _, created = UploadCSV.objects.get_or_create(
-    #         nomor = column[0],
-    #         nama = column[1],
-    #         nim = column[2],
-    #         attendance = column[3]
-    #     )
 
     context={
         'form':form, 'videos':videos
     }
     return render(request, 'video.html', context)
 
-# def uploadCSV(request):
-#     template = 'video.html'
-#     prompt ={
-#         'order' : 'order of CSV should be nomor, nama, nim, attendance'
-#     }
-
-#     if request.method == "GET":
-#         return render(request, template, prompt)
-
-#     csv_file = request.FILES.get("file", None)
-
-#     if not csv_file.name.endswith(".csv"):
-#         messages.error(request, 'File yang dimasukkan bukan csv')
-    
-#     data_set = csv_file.read().decode('UTF-8')
-#     io_string = io.StringIO(data_set)
-#     next(io_string)
-#     for column in csv.reader(io_string, delimiter=",", quotechar="|"):
-#         _, created = UploadCSV.objects.update_or_create(
-#             nomor = column[0],
-#             nama = column[1],
-#             nim = column[2],
-#             attendance = column[3]
-#         )
-#     return render (request, 'video.html', context)
-
 def kodeKenzy(request):
     #masukkan kode kenzy
     pass
 
     return render (request, 'video.html', context)
+
+
+#views untuk Django Rest Framework
+
+class UserViewSet(viewsets.ModelViewSet):
+    queryset = User.objects.all().order_by('date_joined')
+    serializer_class = UserSerializer
+
+class ProfilViewSet(viewsets.ModelViewSet):
+    queryset = Profil.objects.all().order_by('id')
+    serializer_class = ProfilSerializer
+
+class MahasiswaViewSet(viewsets.ModelViewSet):
+    queryset = Mahasiswa.objects.all().order_by('niu')
+    serializer_class = MahasiswaSerializer
+
+class PertemuanViewSet(viewsets.ModelViewSet):
+    queryset = Pertemuan.objects.all().order_by('matkul')
+    serializer_class = PertemuanSerializer
+
+class PresensiViewSet(viewsets.ModelViewSet):
+    queryset = Presensi.objects.all().order_by('pertemuan')
+    serializer_class = PresensiSerializer
+
+class VideoViewSet(viewsets.ModelViewSet):
+    queryset = Video.objects.all().order_by('timestamp')
+    serializer_class = VideoSerializer
+
+class UploadCSVViewSet(viewsets.ModelViewSet):
+    queryset = UploadCSV.objects.all()
+    serializer_class = UploadCSVSerializer

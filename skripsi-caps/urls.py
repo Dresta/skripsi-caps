@@ -15,16 +15,32 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
-from halaman.views import masuk, keluar
+from halaman.views import masuk, keluar, UserViewSet, ProfilViewSet, MahasiswaViewSet, PertemuanViewSet, PresensiViewSet, VideoViewSet, UploadCSVViewSet
 
 from django.conf.urls.static import static
 from django.conf import settings
+
+from django.contrib.auth.models import User
+from rest_framework import routers
+
+router = routers.DefaultRouter()
+router.register('users', UserViewSet)
+router.register('profil', ProfilViewSet)
+router.register('mahasiswa', MahasiswaViewSet)
+router.register('pertemuan', PertemuanViewSet)
+router.register('video', VideoViewSet)
+router.register('upload', UploadCSVViewSet)
+
 
 urlpatterns = [
     path('masuk/', masuk, name='masuk'),
     path('keluar/', keluar, name='keluar'),
     path('admin/', admin.site.urls),
     path('halaman/', include('halaman.urls')),
+
+    path("", include(router.urls)),
+    path('api-auth/', include('rest_framework.urls', namespace='rest_framework'))
 ]
+   
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
