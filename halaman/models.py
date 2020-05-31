@@ -3,6 +3,7 @@ from django.db import transaction
 from django.db.models import F, Max
 
 from django.contrib.auth.models import User
+
 # Create your models here.
 class Profil(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='profil')
@@ -26,10 +27,11 @@ class Mahasiswa(models.Model):
     angkatan = models.IntegerField(default=2016)
 
     def __str__(self):
-        return self.nama
+        return ' %s - %s' % ( self.niu, self.nama)
 
 class Pertemuan(models.Model):
     matkul = models.ForeignKey(Profil, on_delete=models.CASCADE, related_name='pertemuan')
+    waktu_perkuliahan = models.DateField(auto_now=True, blank=True)
 
     def save(self, *args, **kwargs):
         self.intensitas = Pertemuan.objects.count()
@@ -39,9 +41,8 @@ class Pertemuan(models.Model):
         return 'id pertemuan %s mata kuliah %s'  % (self.id , self.matkul.nama)
 
 class Presensi(models.Model):
-    mahasiswa = models.ForeignKey(Mahasiswa, on_delete=models.CASCADE)
     pertemuan = models.ForeignKey(Pertemuan, on_delete=models.CASCADE)
-    waktu_kehadiran = models.DateField(auto_now=True, blank=True)
+    mahasiswa = models.ForeignKey(Mahasiswa, on_delete=models.CASCADE)
     status = models.CharField(max_length=10, blank=True)
 
     def __str__(self):
@@ -61,8 +62,8 @@ class Video(models.Model):
 class UploadCSV(models.Model):
     nomor = models.IntegerField()
     nama = models.CharField(max_length = 100)
-    nim = models.IntegerField()
+    nim = models.IntegerField(primary_key=True)
     attendance = models.IntegerField(blank=True)
 
     def __str__(self):
-        return self.nama
+        return str(self.nim)

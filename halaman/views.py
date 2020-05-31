@@ -5,15 +5,16 @@ import csv, io
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required, permission_required
+from django.contrib.auth.models import User
 from django.contrib.auth.models import Group
 from django.contrib.auth.forms import UserCreationForm
 
 from .decorators import unauthenticated_user
 
-from django.contrib.auth.models import User
 from .models import Profil, Mahasiswa, Presensi, Pertemuan, Video, UploadCSV
 from .forms import PertemuanForm, ProfilForm, VideoForm
 
+from django.core.serializers import serialize
 from rest_framework import viewsets
 from .serializers import *
 
@@ -188,6 +189,7 @@ def rekapDetail(request, pk):
 def video(request):
 
     videos = Video.objects.all()
+    hapus = UploadCSV.objects.all().delete()
 
     if request.method == "POST":
         csv_file = request.FILES.get("file", None)
@@ -213,7 +215,7 @@ def video(request):
         form = VideoForm()
 
     context={
-        'form':form, 'videos':videos
+        'form':form, 'videos':videos, 'hapus' : hapus,
     }
     return render(request, 'video.html', context)
 
@@ -223,9 +225,21 @@ def kodeKenzy(request):
 
     return render (request, 'video.html', context)
 
+def presensi(request):
+   
+    # dummy = UploadCSV.objects.all()
+    # mahasiswa = Mahasiswa.objects.filter(niu__in=dummy)
+    # kehadiran = UploadCSV.objects.filter(nim__in=mahasiswa)
+    # pertemuan = Pertemuan.objects.all()
+
+    context={
+        
+    }
+    return  render(request, 'presensi.html', context  )
+
+
 
 #views untuk Django Rest Framework
-
 class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all().order_by('date_joined')
     serializer_class = UserSerializer

@@ -9,9 +9,10 @@
         axios
         .get('http://jsonplaceholder.typicode.com/users')
         .then(response => {
-            response.data.forEach(element =>{
-                tampilkanPresensi(element)
-            });
+            console.log(response)
+            //response.data.forEach(element =>{
+                //tampilkanPresensi(element)
+            //});
         })
         .catch(err => console.log(err));
     });

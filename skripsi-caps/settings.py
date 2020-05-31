@@ -111,6 +111,7 @@ REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': [
         'rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly'
     ]
+    
 }
 
 # Internationalization
@@ -137,3 +138,5 @@ MEDIA_URL = '/halaman/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, '/halaman/')
 
 CRISPY_TEMPLATE_PACK = 'uni_form'
+
+#CSRF_COOKIE_NAME = "XSRF-TOKEN"

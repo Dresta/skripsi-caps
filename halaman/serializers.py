@@ -10,22 +10,29 @@ class UserSerializer(serializers.ModelSerializer):
 class ProfilSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Profil
-        fields = ['user', 'kode', 'nama', 'ruang']
+        fields = ['user', 'id', 'kode', 'nama', 'ruang']
 
 class MahasiswaSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Mahasiswa
-        fields = "__all__"
+        fields = ['url', 'niu', 'nama', 'nim', 'angkatan', 'program_studi']
 
-class PertemuanSerializer(serializers.HyperlinkedModelSerializer):
+
+class PertemuanSerializer(serializers.ModelSerializer):
+    nama_matkul = serializers.SerializerMethodField('get_matkul_name')
     class Meta:
         model = Pertemuan
-        fields = "__all__"
+        fields = ['url', 'id', 'nama_matkul', 'waktu_perkuliahan']
 
-class PresensiSerializer(serializers.HyperlinkedModelSerializer):
+
+    def get_matkul_name(self, obj):
+        return obj.matkul.nama
+
+
+class PresensiSerializer(serializers.ModelSerializer):
     class Meta:
         model = Presensi
-        fields = ['mahasiswa', 'pertemuan', 'waktu_kehadiran', 'status']
+        fields = ['mahasiswa', 'pertemuan', 'status']
 
 class VideoSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
@@ -35,5 +42,5 @@ class VideoSerializer(serializers.HyperlinkedModelSerializer):
 class UploadCSVSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = UploadCSV
-        fields = "__all__"
+        fields = ['url', 'nim', 'nomor', 'nama', 'attendance']
         

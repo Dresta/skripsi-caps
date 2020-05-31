@@ -28,6 +28,7 @@ router.register('users', UserViewSet)
 router.register('profil', ProfilViewSet)
 router.register('mahasiswa', MahasiswaViewSet)
 router.register('pertemuan', PertemuanViewSet)
+router.register('presensi', PresensiViewSet)
 router.register('video', VideoViewSet)
 router.register('upload', UploadCSVViewSet)
 
