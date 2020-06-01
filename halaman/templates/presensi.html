@@ -30,7 +30,7 @@
                     <div class="card">
                         <div class="card-body listpad">
                             <h5 class="ml-3">Kehadiran Mahasiswa</h5> <br>
-                            <form method="POST" enctype="application/json" id="presensiInputForm">
+                            <form method="POST" id="presensiInputForm">
                                 {% csrf_token %}
                                 <label>Pilih Pertemuan: </label> <br>
                                 <select name="" id="pertemuan">
@@ -84,8 +84,9 @@
 
     <script>
 
-    axios.defaults.xsrfCookieName = 'csrftoken';
-    axios.defaults.xsrfHeaderName = "X-CSRFTOKEN";
+    //axios.defaults.xsrfCookieName = 'csrftoken';
+    //axios.defaults.xsrfHeaderName = "X-CSRFTOKEN";
+    
 
     let one ="http://127.0.0.1:8000/mahasiswa/";
     let two ="http://127.0.0.1:8000/upload/";
@@ -218,6 +219,21 @@
 
     }
 
+    function getCookie(name) {
+        var cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            var cookies = document.cookie.split(';');
+            for (var i = 0; i < cookies.length; i++) {
+                var cookie = cookies[i].trim();
+                // Does this cookie string begin with the name we want?
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
     document.getElementById('presensiInputForm').addEventListener('submit', savebatch);
 
     function savebatch(e){
@@ -270,23 +286,31 @@
         }
 
         console.log(saveStatus)
+        
+        var csrftoken = getCookie('csrftoken');
+
+        const options = {
+        headers: {"X-CSRFToken": csrftoken }
+        };
 
         if(saveStatus.nim == saveMahasiswa.niu){
             saveStatus.forEach(simpan =>{
+
+                console.log(savePertemuan)
+                console.log(simpan.nim)
+                console.log(simpan.attendance)
+
                 axios.post('http://127.0.0.1:8000/presensi/', {
                     pertemuan: savePertemuan,
                     mahasiswa : simpan.nim,
                     status: simpan.attendance
-                })
+                }, options )
                 .then(res => {
                     console.log(res)
                 })
                 .catch(err => {
                     console.log(err.response.request._response)
                 })
-                //console.log(savePertemuan)
-                //console.log(simpan.nim)
-                //console.log(simpan.attendance)
             })
         }
         

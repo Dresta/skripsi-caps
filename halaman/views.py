@@ -176,8 +176,8 @@ def rekapDetail(request, pk):
     pertemuan = Pertemuan.objects.get(id=pk)
     presensi = Presensi.objects.filter(pertemuan_id = pk)
 
-    hadir = presensi.exclude(status="Absen")
-    absen = presensi.filter(status="Absen")
+    hadir = presensi.exclude(status="0")
+    absen = presensi.filter(status="0")
 
     context = {
         'pertemuan':pertemuan, 'presensi':presensi,

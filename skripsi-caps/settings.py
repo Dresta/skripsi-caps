@@ -12,6 +12,8 @@ https://docs.djangoproject.com/en/2.2/ref/settings/
 
 import os
 
+from corsheaders.defaults import default_headers
+
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
@@ -43,6 +45,8 @@ INSTALLED_APPS = [
     'crispy_forms',
 
     'rest_framework',
+
+    'corsheaders',  
 ]
 
 MIDDLEWARE = [
@@ -53,6 +57,8 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+
+    'corsheaders.middleware.CorsMiddleware',
 ]
 
 ROOT_URLCONF = 'skripsi-caps.urls'
@@ -109,7 +115,8 @@ REST_FRAMEWORK = {
     # Use Django's standard `django.contrib.auth` permissions,
     # or allow read-only access for unauthenticated users.
     'DEFAULT_PERMISSION_CLASSES': [
-        'rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly'
+        #'rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly',
+        'rest_framework.permissions.AllowAny',
     ]
     
 }
@@ -140,3 +147,7 @@ MEDIA_ROOT = os.path.join(BASE_DIR, '/halaman/')
 CRISPY_TEMPLATE_PACK = 'uni_form'
 
 #CSRF_COOKIE_NAME = "XSRF-TOKEN"
+
+CORS_ALLOW_HEADERS = list(default_headers) + [
+    'X-CSRFToken',
+]

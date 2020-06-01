@@ -46,7 +46,7 @@ class Presensi(models.Model):
     status = models.CharField(max_length=10, blank=True)
 
     def __str__(self):
-        return ' %s id pertemuan %s %s' % ( self.mahasiswa.niu, self.pertemuan.id, self.pertemuan.matkul.nama,) 
+        return ' Pertemuan %s %s - %s' % ( self.pertemuan.id, self.pertemuan.matkul.nama, self.mahasiswa.niu) 
 
 class Video(models.Model):
     deskripsi_video = models.CharField(max_length=500)

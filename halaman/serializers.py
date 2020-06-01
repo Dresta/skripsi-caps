@@ -32,7 +32,7 @@ class PertemuanSerializer(serializers.ModelSerializer):
 class PresensiSerializer(serializers.ModelSerializer):
     class Meta:
         model = Presensi
-        fields = ['mahasiswa', 'pertemuan', 'status']
+        fields = ['pertemuan', 'mahasiswa', 'status']
 
 class VideoSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
