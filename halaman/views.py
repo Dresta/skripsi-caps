@@ -113,13 +113,6 @@ def dashboard(request):
 def aktivitas(request):
     pertemuan = Pertemuan.objects.last()
 
-    if request.method == 'GET':
-        #if mahasiswa.niu == json.niu -> tampilkan nama || get
-        pass
-    elif request.method == 'POST':
-        #if button clicked -> save  to db || post
-        pass
-
     context = {
         
    }
@@ -127,13 +120,16 @@ def aktivitas(request):
 
 @login_required(login_url='masuk')
 def daftarMahasiswa(request):
-    
-    mahasiswa = Mahasiswa.objects.all()
-    presensi = Presensi.objects.all()
+
+    log_user = request.user
+    nama_matkul = request.user.profil
+
+    list_pertemuan = Pertemuan.objects.filter(matkul=nama_matkul)
+    presensi = Presensi.objects.filter(pertemuan__in=list_pertemuan)
 
     context = {
       "hal_daftarMahasiswa" : "active",
-      "mahasiswa" : mahasiswa, 'presensi': presensi,
+      'presensi': presensi,
 
    }
     return render(request, 'mahasiswa.html', context)

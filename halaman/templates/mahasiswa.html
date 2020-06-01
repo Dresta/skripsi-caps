@@ -12,7 +12,7 @@
         color:rgb(63, 63, 63);">
             <span style=" margin-right:4px; background-color:rgb(0,120,240);
             padding:6px; border-radius:8px; color:white;"> Jumlah Mahasiswa 
-            </span>{{mahasiswa.count}} Mahasiswa
+            </span>{{presensi.count}} Mahasiswa
         </label>
         <h4>Daftar Mahasiswa</h4> <br>
         <div class="scrollable ">
@@ -21,12 +21,12 @@
                 <th>NIM Mahasiswa</th>
                 <th>Angkatan</th>
                 <th></th>    
-                {% for mahasiswa in mahasiswa %}
+                {% for kehadiran in presensi %}
                 <tr style="margin-left: 2rem" >
-                    <td>{{ mahasiswa.nama }}</td>
-                    <td>{{mahasiswa.nim}}</td>
-                    <td> {{mahasiswa.angkatan}}</td>
-                    <td><a class="btn btn-outline-info" href="{% url 'detail' mahasiswa.niu %}">Detail</a></td>
+                    <td>{{ kehadiran.mahasiswa.nama }}</td>
+                    <td>{{kehadiran.mahasiswa.nim}}</td>
+                    <td> {{kehadiran.mahasiswa.angkatan}}</td>
+                    <td><a class="btn btn-outline-info" href="{% url 'detail' kehadiran.mahasiswa.niu %}">Detail</a></td>
                 </tr>
                 {% endfor %}
             </table>
