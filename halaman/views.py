@@ -123,7 +123,6 @@ def daftarMahasiswa(request):
 
     log_user = request.user
     nama_matkul = request.user.profil
-
     list_pertemuan = Pertemuan.objects.filter(matkul=nama_matkul)
     presensi = Presensi.objects.filter(pertemuan__in=list_pertemuan)
 
@@ -136,17 +135,22 @@ def daftarMahasiswa(request):
 
 @login_required(login_url='masuk')
 def detail(request, pk):
-    mahasiswa = Mahasiswa.objects.get(niu=pk)
-    presensi = mahasiswa.presensi_set.all()
 
-    jumlah_hadir = presensi.filter(status="Hadir").count()
-    jumlah_terlambat = presensi.filter(status="Telat").count()
-    jumlah_absen = presensi.filter(status="Absen").count()
-    total_kehadiran = presensi.exclude(status="Absen").count()
+    log_user = request.user
+    nama_matkul = request.user.profil
+    list_pertemuan = Pertemuan.objects.filter(matkul=nama_matkul)
+    kehadiran = Presensi.objects.filter(pertemuan__in=list_pertemuan)
+
+    mahasiswa = Mahasiswa.objects.get(niu=pk)
+    presensi = mahasiswa.presensi_set.filter(pertemuan__in=list_pertemuan)
+
+    jumlah_hadir = presensi.filter(status="1").count()
+    jumlah_absen = presensi.filter(status="0").count()
+    total_kehadiran = presensi.exclude(status="0").count()
 
     context = {
         'mahasiswa':mahasiswa, 'presensi':presensi,
-        'jumlah_hadir' :jumlah_hadir, 'jumlah_terlambat':jumlah_terlambat, 
+        'jumlah_hadir' :jumlah_hadir,
         'jumlah_absen':jumlah_absen, 'total_kehadiran':total_kehadiran,
     }
     return render(request, 'detail.html', context)

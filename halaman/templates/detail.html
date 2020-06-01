@@ -52,12 +52,16 @@
                         <td>{{jumlah_hadir}}</td>
                     </tr>
                     <tr>
-                        <td>Terlambat</td>
-                        <td>{{jumlah_terlambat}}</td>
-                    </tr>
-                    <tr>
                         <td>Absen</td>
                         <td>{{jumlah_absen}}</td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <br>
+                        </td>
+                        <td>
+                            <br>
+                        </td>
                     </tr>
                     <tr>
                         <td><strong>Kehadiran</strong></td>
@@ -72,13 +76,15 @@
                     <table class="table">
                         <thead class="thead-dark">
                             <tr>
-                                <th width="60%">Pelaksanaan Perkuliahan</th>
-                                <th width="40%">Status</th>
+                                <th width="40%">Mata Kuliah</th>
+                                <th width="40%">Pelaksanaan Perkuliahan</th>
+                                <th width="20%">Status</th>
                             </tr>
                         </thead>
                         {% for presensi in presensi %}
                             <tr>
-                                <td>{{presensi.waktu_kehadiran}}</td>
+                                <td>{{presensi.pertemuan.matkul}}</td>
+                                <td>{{presensi.pertemuan.waktu_perkuliahan}}</td>
                                 <td>{{presensi.status}}</td>
                             </tr>
                         {% endfor %}
