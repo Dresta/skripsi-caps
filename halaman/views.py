@@ -266,6 +266,7 @@ def kenzy(request):
 
 def kodeKenzy(request):
     #masukkan kode kenzy
+    #komen
     import numpy as np
     import pandas as pd
     import os
