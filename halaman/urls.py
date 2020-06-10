@@ -11,4 +11,6 @@ urlpatterns = [
     path('rekap/', views.rekap, name='rekap'),
     path('rekapDetail/<str:pk>', views.rekapDetail, name='rekapDetail'),
     path('video/', views.video, name='video'),
+    path('kenzy/', views.kenzy, name='kenzy'),
+    path('kenzy2/', views.kodeKenzy, name='script')
 ] 

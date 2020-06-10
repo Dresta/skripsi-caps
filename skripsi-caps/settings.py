@@ -58,7 +58,7 @@ ROOT_URLCONF = 'skripsi-caps.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [''],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -125,6 +125,6 @@ STATIC_URL = '/static/'
 
 MEDIA_URL = '/halaman/media/'
 
-MEDIA_ROOT = os.path.join(BASE_DIR, '/halaman/')
+MEDIA_ROOT = os.path.join(BASE_DIR, 'halaman')
 
 CRISPY_TEMPLATE_PACK = 'uni_form'
