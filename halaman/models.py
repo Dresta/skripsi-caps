@@ -51,7 +51,7 @@ class Presensi(models.Model):
 
 class Video(models.Model):
     deskripsi_video = models.CharField(max_length=500)
-    videofile = models.FileField(upload_to='video/%Y-%m-%d/', null=True, verbose_name='')
+    videofile = models.FileField(upload_to='video/', null=True, verbose_name='')
     timestamp = models.DateTimeField(auto_now_add=True)
 
     class Meta:

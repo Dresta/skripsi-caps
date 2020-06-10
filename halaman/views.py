@@ -163,16 +163,15 @@ def detail(request, pk):
     kehadiran = Presensi.objects.filter(pertemuan__in=list_pertemuan)
 
     mahasiswa = Mahasiswa.objects.get(niu=pk)
-    presensi = mahasiswa.presensi_set.filter(pertemuan__in=list_pertemuan)
-
-    jumlah_hadir = presensi.filter(status="1").count()
-    jumlah_absen = presensi.filter(status="0").count()
-    total_kehadiran = presensi.exclude(status="0").count()
+    presensi = mahasiswa.presensi_set.all()
+    # jumlah_hadir = presensi.filter(status="1").count()
+    # jumlah_absen = presensi.filter(status="0").count()
+    # total_kehadiran = presensi.exclude(status="0").count()
 
     context = {
         'mahasiswa':mahasiswa, 'presensi':presensi,
-        'jumlah_hadir' :jumlah_hadir,
-        'jumlah_absen':jumlah_absen, 'total_kehadiran':total_kehadiran,
+        # 'jumlah_hadir' :jumlah_hadir,
+        # 'jumlah_absen':jumlah_absen, 'total_kehadiran':total_kehadiran,
     }
     return render(request, 'detail.html', context)
 
@@ -213,6 +212,21 @@ def video(request):
     hapus = UploadCSV.objects.all().delete()
 
     if request.method == "POST":
+        form = VideoForm (request.POST, request.FILES)
+        if form.is_valid():
+            form.save()
+    else:
+        form = VideoForm()
+    
+    context={
+        'form':form, 'videos':videos, 
+    }
+    return render(request, 'video.html', context)
+
+def uploadKehadiran(request):
+    hapus = UploadCSV.objects.all().delete()
+
+    if request.method == "POST":
         csv_file = request.FILES.get("file", None)
 
         if not csv_file.name.endswith(".csv"):
@@ -228,17 +242,11 @@ def video(request):
                 nim = column[2],
                 attendance = column[3]
             )
-
-        form = VideoForm (request.POST, request.FILES)
-        if form.is_valid():
-            form.save()
-    else:
-        form = VideoForm()
-
-    context={
-        'form':form, 'videos':videos, 'hapus' : hapus,
+        return redirect('presensi')
+    context ={
+        'hapus' : hapus,
     }
-    return render(request, 'video.html', context)
+    return render(request, 'upload.html', context)
 
 def kodeKenzy(request):
     #masukkan kode kenzy
@@ -247,7 +255,8 @@ def kodeKenzy(request):
     return render (request, 'video.html', context)
 
 def presensi(request):
-
+    if request.method == "POST":
+        return redirect('daftarMahasiswa')
     context={
         'hal_presensi' : 'active'
     }

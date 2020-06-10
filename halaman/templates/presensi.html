@@ -14,7 +14,7 @@
 {% block content %}
 <div class="card">
     <div class="card-body"> <br>
-        <h4>Rekap Kehadiran Sementara</h4> <br>
+        <h4>Pilih Pertemuan</h4> <br>
         <form method="POST" id="presensiInputForm">
             {% csrf_token %}
             <div class="col-6 scrollable" style="float:right">
@@ -40,6 +40,7 @@
             <hr> <h6><strong> Pilih Pertemuan: </strong> </h6> <hr style="margin: 5px 0px 20px">
                 <select name="" id="pertemuan" class=" block h5" style="margin-top: 1vh">
                 </select>
+                
             </div>
             
         </form>

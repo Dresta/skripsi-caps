@@ -35,11 +35,7 @@
                                 <label> Upload mp4 file</label>
                                 {{form.deskripsi_video}}
                                 {{form.videofile}}
-                                <br>
-                                <label> Upload a CSV File </label>
-                                <input type="file" name="file"> <br>
-                                <br>
-                                {% comment %} {{form|crispy}} {% endcomment %}
+                                <br> <br>
                                 <button type="sumbit">Upload</button>
                             </form>
                             <hr>
@@ -92,9 +88,6 @@
     </body>
     {% block script %}
     <script>
-    $(document).ready(function(){
-        {{hapus}}
-    });
     </script>
     {% endblock script %}
 </html>

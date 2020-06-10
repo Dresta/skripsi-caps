@@ -13,5 +13,6 @@ urlpatterns = [
     path('rekapDetail/<str:pk>', views.rekapDetail, name='rekapDetail'),
     path('dashboard_akademik', views.dashboard_akademik, name='Dashboard'),
     path('video/', views.video, name='video'),
+    path('upload/', views.uploadKehadiran, name='upload'),
     path('presensi/', views.presensi, name='presensi')
 ] 
