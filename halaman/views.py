@@ -264,6 +264,9 @@ def kenzy(request):
 
     return render(request, 'kenzy.html')
 
+def uploadkenzy(request):
+    return render(request, 'uploadkenzy.html')
+
 def kodeKenzy(request):
     #masukkan kode kenzy
     #komen
@@ -325,7 +328,7 @@ def kodeKenzy(request):
         # df.to_excel('data.xlsx',index=False)
 
     def update_Excel():
-        with open('halaman/video/2020-06-02/data.csv.csv') as f:
+        with open('halaman/video/2020-06-02/data.csv') as f:
             data = csv.reader(f)
             lines = list(data)
             for line in lines:
@@ -386,7 +389,7 @@ def kodeKenzy(request):
 
 
     face_cascade = cv2.CascadeClassifier('halaman/video/haarcascade/haarcascade_frontalface_default.xml')
-    cap = cv2.VideoCapture('halaman/video/2020-06-02/test5.mp4')
+    cap = cv2.VideoCapture('halaman/video/test.mp4')
 
     # cap.set(3,640) # set Width
     # cap.set(4,480) # set Height
