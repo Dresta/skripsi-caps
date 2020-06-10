@@ -4,16 +4,21 @@
     Masukkan Profil Dosen 
 {% endblock header %}
 
+{% block sidebar %}
+    {% include 'adds/sidebar-superadmin.html' %}
+{% endblock sidebar %}
+
 {% load crispy_forms_tags %}
 
 {% block content %}
 <div class="card">
-    <div class="card-body"> 
+    <div class="card-body">  <br>
+    <h4>Data Perkuliahan</h4>
     <br>
         <div class="col-12 d-flex justify-content-center">
         <form method="POST" action="" class="col-6">
                 {% csrf_token %}                
-                <label for="nama" name="nama"><h4> Username {{last_user}}</h4></label>
+                <label for="nama" name="nama"><h4> {{last_user}}</h4></label>
                 <input type="text" name="kode" placeholder="Kode Matakuliah. . ." class="form-control">
                 <br>
                 <input type="text" name="matkul" placeholder="Nama Mata Kuliah. . ." class="form-control">

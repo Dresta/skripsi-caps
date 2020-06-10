@@ -4,6 +4,10 @@
     Dashboard Dosen
 {% endblock header %}
 
+{% block sidebar %}
+    {% include 'adds/sidebar.html' %}
+{% endblock sidebar %}
+
 {% block content %}
 <div class="card">
     <div class="card-body">
@@ -38,8 +42,9 @@
                         
                         <button type="submit" class="btn btn-success" 
                         id="btn_mulai" action="{% url 'aktivitas' %}">
-                        Mulai Perkuliahan 
+                        Mulai Perkuliahan
                         </button> 
+                        
                     </form>
                 </center>
             </div>
@@ -49,5 +54,13 @@
 {% endblock content %}
 
 {% block script %}
+<script>
+
+var mulai = document.getElementById("btn_mulai");
+total = {{jumlah}} + 1;
+jumlah ='mulai perkuliahan ke - ' + total;
+mulai.innerHTML = jumlah;
+</script>
+
 {% endblock script %}
 

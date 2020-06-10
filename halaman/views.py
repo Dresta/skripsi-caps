@@ -93,22 +93,43 @@ def dashboard(request):
 
     profil = Profil.objects.all()
 
-    if request.method == "POST":    
-        data = request.POST
-        matkul_id = request.user.profil.id
-        pertemuan = Pertemuan.objects.create(matkul_id=matkul_id)
-        if pertemuan:
-            return redirect('aktivitas')
-        else:
-            return HttpResponse("Pertemuan tidak terselenggara")
+    log_user = request.user
+    nama_matkul = request.user.profil
+    jumlah = Pertemuan.objects.filter(matkul__nama=nama_matkul).count
+
+    if request.user.is_superuser:
+        return redirect('Dashboard')
+
+    else:
+        if request.method == "POST":    
+            data = request.POST
+            matkul_id = request.user.profil.id
+            pertemuan = Pertemuan.objects.create(matkul_id=matkul_id)
+            if pertemuan:
+                return redirect('/halaman/dashboard/')
+            else:
+                return HttpResponse("Pertemuan tidak terselenggara")
+
+        context = {
+            'nama_matkul' : nama_matkul,
+            "hal_dashboard" : "active",
+            'profil' : profil, 
+            'jumlah' : jumlah,
+        }
+        
+        return render (request, 'dashboard.html', context)
+    
+def dashboard_akademik(request):
+
+    profil = Profil.objects.exclude(id = 1)
+
 
     context = {
-        'nama_matkul' : nama_matkul,
-        "hal_dashboard" : "active",
-        'profil' : profil, 
+        'profil' : profil ,
+        'hal_dashboard_aka': "active",
     }
-    return render (request, 'dashboard.html', context)
-    
+    return render (request, 'list_dosen.html', context)
+
 @login_required(login_url='masuk')
 def aktivitas(request):
     pertemuan = Pertemuan.objects.last()
@@ -123,12 +144,12 @@ def daftarMahasiswa(request):
 
     log_user = request.user
     nama_matkul = request.user.profil
-    list_pertemuan = Pertemuan.objects.filter(matkul=nama_matkul)
-    presensi = Presensi.objects.filter(pertemuan__in=list_pertemuan)
-
+    presensi = Presensi.objects.filter(pertemuan__matkul=nama_matkul)
+    mahasiswa = Mahasiswa.objects.all()
+    
     context = {
       "hal_daftarMahasiswa" : "active",
-      'presensi': presensi,
+      'presensi': presensi, 'mahasiswa':mahasiswa,
 
    }
     return render(request, 'mahasiswa.html', context)
@@ -226,14 +247,9 @@ def kodeKenzy(request):
     return render (request, 'video.html', context)
 
 def presensi(request):
-   
-    # dummy = UploadCSV.objects.all()
-    # mahasiswa = Mahasiswa.objects.filter(niu__in=dummy)
-    # kehadiran = UploadCSV.objects.filter(nim__in=mahasiswa)
-    # pertemuan = Pertemuan.objects.all()
 
     context={
-        
+        'hal_presensi' : 'active'
     }
     return  render(request, 'presensi.html', context  )
 

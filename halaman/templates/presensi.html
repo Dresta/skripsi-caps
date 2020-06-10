@@ -1,322 +1,293 @@
-<html>
-    <head>
-        <title></title>
-        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" 
-        integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
-        
-    {% block head %}
-        {% load static %}
-        <link rel="stylesheet" href="{% static 'style.css' %}" type="text/css">
-    {% endblock head %}
-    </head>
 
-    {% load crispy_forms_tags %}
+{% extends 'base.html' %}
 
-    <body>
-        <div class="main">
-            <div class="row mx-auto"> 
-                <div class="col-md-12">
-                    <nav class="navbar navbar-expand-lg">
-                        {% block kembali %} {% endblock kembali %}
-                        <p class="navbar-brand"> <strong>
-                        Simpan presensi kehadiran Mahasiswa
-                        </strong></p>
-                    </nav> 
-                </div>
+{% block header %}
+    Simpan presensi kehadiran Mahasiswa
+{% endblock header %}
+
+{% load crispy_forms_tags %}
+
+{% block sidebar %}
+    {% include 'adds/sidebar-superadmin.html' %}
+{% endblock sidebar %}
+
+{% block content %}
+<div class="card">
+    <div class="card-body"> <br>
+        <h4>Rekap Kehadiran Sementara</h4> <br>
+        <form method="POST" id="presensiInputForm">
+            {% csrf_token %}
+            <div class="col-6 scrollable" style="float:right">
+            <table class="table">
+                <tr>
+                    <th>Nama Mahasiswa</th>
+                    <th>Status</th>
+                </tr>
+                <tr>
+                    <td>
+                        <label id="mahasiswa" name="mahasiswa"></label>
+                    </td>
+                    <td>
+                        <label id="status" name="status"></label> 
+                    </td>
+                </tr>
+            </table>
+            <br>
+            <button type="sumbit" class="btn btn-success btn-block">Simpan</button>
             </div>
 
-            <div class="row mx-auto">
-                <div class="col-md-4">
-                    <div class="card">
-                        <div class="card-body listpad">
-                            <h5 class="ml-3">Kehadiran Mahasiswa</h5> <br>
-                            <form method="POST" id="presensiInputForm">
-                                {% csrf_token %}
-                                <label>Pilih Pertemuan: </label> <br>
-                                <select name="" id="pertemuan">
-                                </select>
-                                
-                                <table>
-                                    <tr>
-                                        <th>Nama Mahasiswa</th>
-                                        <th>Status</th>
-                                    </tr>
-                                    <tr>
-                                        <td>
-                                            <label id="mahasiswa" name="mahasiswa"></label>
-                                        </td>
-                                        <td>
-                                            <label id="status" name="status"></label> 
-                                        </td>
-                                    </tr>
-                                </table>
-                                                                
-                                <button type="sumbit">Simpan</button>
-                            </form>
-                            <hr>
-                            
-                        </div>
-                    </div>
-                </div>
-
-                <div class="col-md-8">
-                    <div class="card">
-                        <div class="card-body">
-                            <div class="row">
-                                <h5 class="ml-3">Presensi Mahasiswa Mata kuliah</h5> <br>
-                                    {% comment %} {% for presensi in presensi %}
-                                        <p>{{presensi.mahasiswa.nama}}</p>
-                                        <p>{{presensi.mahasiswa.status}}</p>
-                                        <hr>
-                                    {% endfor %} {% endcomment %}
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>  
-        </div>
-    </body>
-    {% block script %}
-    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
-    <script src= "https://cdnjs.cloudflare.com/ajax/libs/axios/0.19.2/axios.min.js"></script>
-
-    <script>
-
-    //axios.defaults.xsrfCookieName = 'csrftoken';
-    //axios.defaults.xsrfHeaderName = "X-CSRFTOKEN";
-    
-
-    let one ="http://127.0.0.1:8000/mahasiswa/";
-    let two ="http://127.0.0.1:8000/upload/";
-    let three ='http://127.0.0.1:8000/pertemuan/';
-
-    const requestOne = axios.get(one);
-    const requestTwo = axios.get(two);
-    const requestThree = axios.get(three);
-
-    let mahasiswa = [];
-    let status = [];
-    let pertemuan = [];
-
-    axios
-    .all([requestOne, requestTwo, requestThree])
-    .then(
-        axios.spread((...responses) => {
-        const responseOne = responses[0];
-        const responseTwo = responses[1];
-        const responseThree = responses[2];
-
-            //daftar mahasiswa semua
-            mahasiswa = responseOne.data
-            //console.log(mahasiswa)
-
-            //daftar hadir kelas
-            dummy = responseTwo.data
-            //console.log(dummy)
-
-            //List Mahasiswa 
-            let listMhs = [];
-            mahasiswa.forEach(element =>{
-                niu = element.niu
-                dummy.filter(function(nomer){
-                    if (nomer.nim == niu){
-                        listMhs.push(element)
-                    }
-                })
-            })
-            console.log(listMhs)
-
-            //list Status Mahasiswa
-            let listStatus = [];
-            dummy.forEach(element =>{
-                nim = element.nim
-                mahasiswa.filter(function(nomer){
-                    if (nomer.niu == nim){
-                        listStatus.push(element)
-                    }
-                })
-            })
-            console.log(listStatus)
+            <div class="col-6">
+            <hr> <h6><strong> Pilih Pertemuan: </strong> </h6> <hr style="margin: 5px 0px 20px">
+                <select name="" id="pertemuan" class=" block h5" style="margin-top: 1vh">
+                </select>
+            </div>
+            
+        </form>
         
-            //list pertemuan
-            pertemuan = responseThree.data
-            console.log(pertemuan)
+    </div>
+</div>
+{% endblock content %}
 
-            pertemuan.forEach(element =>{
-                tampilkanPertemuan(element)
-            })
+{% block script %}
+<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+<script src= "https://cdnjs.cloudflare.com/ajax/libs/axios/0.19.2/axios.min.js"></script>
 
-            listMhs.forEach(element => {
-                tampilkanMahasiswa(element)
-            })
+<script>
 
-            listStatus.forEach(element => {
-                tampilkanStatus(element)
-            })
+//axios.defaults.xsrfCookieName = 'csrftoken';
+//axios.defaults.xsrfHeaderName = "X-CSRFTOKEN";
 
-        })
-    )
-    .catch(errors => {
-        console.error(errors);
-    });
 
-    function tampilkanPertemuan(element){
-        var selectList = document.getElementById("pertemuan");
+let one ="http://127.0.0.1:8000/mahasiswa/";
+let two ="http://127.0.0.1:8000/upload/";
+let three ='http://127.0.0.1:8000/pertemuan/';
 
-        var option = document.createElement("option");
-        option.setAttribute("value", element.id);
-        option.text = element.nama_matkul + ' - ' + element.waktu_perkuliahan;
-        selectList.appendChild(option);
-    }
-    
-    function tampilkanMahasiswa(element){
-        var list = document.createTextNode('');
-        var listMahasiswa = document.createElement('p');
-        var niuMahasiswa = document.createElement('p');
-        var divMahasiswa = document.createElement('div');
+const requestOne = axios.get(one);
+const requestTwo = axios.get(two);
+const requestThree = axios.get(three);
 
-        divMahasiswa.setAttribute("name", "listMahasiswa");
-        listMahasiswa.setAttribute("name", "nama");
-        niuMahasiswa.setAttribute("name", "niu");
-        niuMahasiswa.setAttribute("style", "display:none");
-        
+let mahasiswa = [];
+let status = [];
+let pertemuan = [];
 
-        listMahasiswa.appendChild(list);
-        listMahasiswa.innerHTML = element.nama
-        divMahasiswa.appendChild(listMahasiswa)
-        
-        niuMahasiswa.appendChild(list);
-        niuMahasiswa.innerHTML = element.niu 
-        divMahasiswa.appendChild(niuMahasiswa)
+axios
+.all([requestOne, requestTwo, requestThree])
+.then(
+    axios.spread((...responses) => {
+    const responseOne = responses[0];
+    const responseTwo = responses[1];
+    const responseThree = responses[2];
 
-        var kehadiran = document.getElementById('mahasiswa');
-        kehadiran.appendChild(divMahasiswa);
-    }
+        //daftar mahasiswa semua
+        mahasiswa = responseOne.data
+        //console.log(mahasiswa)
 
-    function tampilkanStatus(element){
-        var list = document.createTextNode('');
-        var nimStatus = document.createElement('p');
-        var listStatus = document.createElement('p');
-        var divStatus = document.createElement('div');
+        //daftar hadir kelas
+        dummy = responseTwo.data
+        //console.log(dummy)
 
-        divStatus.setAttribute("name", "listStatus");
-        listStatus.setAttribute("name", "attendance");
-        nimStatus.setAttribute("name", "nim");
-        nimStatus.setAttribute("style", "display:none");
-
-        listStatus.appendChild(list);
-        listStatus.innerHTML = element.attendance
-        divStatus.appendChild(listStatus)
-
-        nimStatus.appendChild(list);
-        nimStatus.innerHTML = element.nim 
-        divStatus.appendChild(nimStatus)
-
-        var kehadiran = document.getElementById('status');
-        kehadiran.appendChild(divStatus);
-
-    }
-
-    function getCookie(name) {
-        var cookieValue = null;
-        if (document.cookie && document.cookie !== '') {
-            var cookies = document.cookie.split(';');
-            for (var i = 0; i < cookies.length; i++) {
-                var cookie = cookies[i].trim();
-                // Does this cookie string begin with the name we want?
-                if (cookie.substring(0, name.length + 1) === (name + '=')) {
-                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-                    break;
+        //List Mahasiswa 
+        let listMhs = [];
+        mahasiswa.forEach(element =>{
+            niu = element.niu
+            dummy.filter(function(nomer){
+                if (nomer.nim == niu){
+                    listMhs.push(element)
                 }
+            })
+        })
+        console.log(listMhs)
+
+        //list Status Mahasiswa
+        let listStatus = [];
+        dummy.forEach(element =>{
+            nim = element.nim
+            mahasiswa.filter(function(nomer){
+                if (nomer.niu == nim){
+                    listStatus.push(element)
+                }
+            })
+        })
+        console.log(listStatus)
+    
+        //list pertemuan
+        pertemuan = responseThree.data
+        console.log(pertemuan)
+
+        pertemuan.forEach(element =>{
+            tampilkanPertemuan(element)
+        })
+
+        listMhs.forEach(element => {
+            tampilkanMahasiswa(element)
+        })
+
+        listStatus.forEach(element => {
+            tampilkanStatus(element)
+        })
+
+    })
+)
+.catch(errors => {
+    console.error(errors);
+});
+
+function tampilkanPertemuan(element){
+    var selectList = document.getElementById("pertemuan");
+
+    var option = document.createElement("option");
+    option.setAttribute("value", element.id);
+    option.text = element.nama_matkul + ' - ' + element.waktu_perkuliahan;
+    selectList.appendChild(option);
+}
+
+function tampilkanMahasiswa(element){
+    var list = document.createTextNode('');
+    var listMahasiswa = document.createElement('p');
+    var niuMahasiswa = document.createElement('p');
+    var divMahasiswa = document.createElement('div');
+
+    divMahasiswa.setAttribute("name", "listMahasiswa");
+    listMahasiswa.setAttribute("name", "nama");
+    niuMahasiswa.setAttribute("name", "niu");
+    niuMahasiswa.setAttribute("style", "display:none");
+    
+
+    listMahasiswa.appendChild(list);
+    listMahasiswa.innerHTML = element.nama
+    divMahasiswa.appendChild(listMahasiswa)
+    
+    niuMahasiswa.appendChild(list);
+    niuMahasiswa.innerHTML = element.niu 
+    divMahasiswa.appendChild(niuMahasiswa)
+
+    var kehadiran = document.getElementById('mahasiswa');
+    kehadiran.appendChild(divMahasiswa);
+}
+
+function tampilkanStatus(element){
+    var list = document.createTextNode('');
+    var nimStatus = document.createElement('p');
+    var listStatus = document.createElement('p');
+    var divStatus = document.createElement('div');
+
+    divStatus.setAttribute("name", "listStatus");
+    listStatus.setAttribute("name", "attendance");
+    nimStatus.setAttribute("name", "nim");
+    nimStatus.setAttribute("style", "display:none");
+
+    listStatus.appendChild(list);
+    listStatus.innerHTML = element.attendance
+    divStatus.appendChild(listStatus)
+
+    nimStatus.appendChild(list);
+    nimStatus.innerHTML = element.nim 
+    divStatus.appendChild(nimStatus)
+
+    var kehadiran = document.getElementById('status');
+    kehadiran.appendChild(divStatus);
+
+}
+
+function getCookie(name) {
+    var cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        var cookies = document.cookie.split(';');
+        for (var i = 0; i < cookies.length; i++) {
+            var cookie = cookies[i].trim();
+            // Does this cookie string begin with the name we want?
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
             }
         }
-        return cookieValue;
     }
-    document.getElementById('presensiInputForm').addEventListener('submit', savebatch);
+    return cookieValue;
+}
+document.getElementById('presensiInputForm').addEventListener('submit', savebatch);
 
-    function savebatch(e){
-        var inputPertemuan = document.getElementById('pertemuan');
-        var savePertemuan = inputPertemuan.value;
-        console.log(savePertemuan)
+function savebatch(e){
+    var inputPertemuan = document.getElementById('pertemuan');
+    var savePertemuan = inputPertemuan.value;
+    console.log(savePertemuan)
 
-        let saveMahasiswa =[];
-        let nama = [];
-        let niu = [];
+    let saveMahasiswa =[];
+    let nama = [];
+    let niu = [];
 
-        var namaMhs = document.getElementsByName('nama')
-            namaMhs.forEach(namaMahasiswa =>{
-                nama.push(namaMahasiswa.innerHTML)
-            })
-        var niuMhs = document.getElementsByName('niu')
-            niuMhs.forEach(niuMahasiswa =>{
-                niu.push(niuMahasiswa.innerHTML)
-            })
+    var namaMhs = document.getElementsByName('nama')
+        namaMhs.forEach(namaMahasiswa =>{
+            nama.push(namaMahasiswa.innerHTML)
+        })
+    var niuMhs = document.getElementsByName('niu')
+        niuMhs.forEach(niuMahasiswa =>{
+            niu.push(niuMahasiswa.innerHTML)
+        })
 
-        for (var i = 0 ; i < namaMhs.length; i++){
-            var newitem = {
-                nama : nama[i],
-                niu : niu[i]
-            }
-            saveMahasiswa.push(newitem)
+    for (var i = 0 ; i < namaMhs.length; i++){
+        var newitem = {
+            nama : nama[i],
+            niu : niu[i]
         }
-
-        console.log(saveMahasiswa)
-
-        let saveStatus = [];
-        let nim = [];
-        let attendance = [];
-
-        var nimDummy = document.getElementsByName('nim')
-            nimDummy.forEach(dummy =>{
-                nim.push(dummy.innerHTML)
-            })
-        var attendanceDummy = document.getElementsByName('attendance')
-            attendanceDummy.forEach(kehadiran =>{
-                attendance.push(kehadiran.innerHTML)
-            })
-
-        for (var i = 0 ; i < nimDummy.length; i++){
-            var newitem = {
-                nim : nim[i],
-                attendance : attendance[i]
-            }
-            saveStatus.push(newitem)
-        }
-
-        console.log(saveStatus)
-        
-        var csrftoken = getCookie('csrftoken');
-
-        const options = {
-        headers: {"X-CSRFToken": csrftoken }
-        };
-
-        if(saveStatus.nim == saveMahasiswa.niu){
-            saveStatus.forEach(simpan =>{
-
-                console.log(savePertemuan)
-                console.log(simpan.nim)
-                console.log(simpan.attendance)
-
-                axios.post('http://127.0.0.1:8000/presensi/', {
-                    pertemuan: savePertemuan,
-                    mahasiswa : simpan.nim,
-                    status: simpan.attendance
-                }, options )
-                .then(res => {
-                    console.log(res)
-                })
-                .catch(err => {
-                    console.log(err.response.request._response)
-                })
-            })
-        }
-        
+        saveMahasiswa.push(newitem)
     }
 
-    </script>
+    console.log(saveMahasiswa)
 
-    {% endblock script %}
-</html>
+    let saveStatus = [];
+    let nim = [];
+    let attendance = [];
+
+    var nimDummy = document.getElementsByName('nim')
+        nimDummy.forEach(dummy =>{
+            nim.push(dummy.innerHTML)
+        })
+    var attendanceDummy = document.getElementsByName('attendance')
+        attendanceDummy.forEach(kehadiran =>{
+            attendance.push(kehadiran.innerHTML)
+        })
+
+    for (var i = 0 ; i < nimDummy.length; i++){
+        var newitem = {
+            nim : nim[i],
+            attendance : attendance[i]
+        }
+        saveStatus.push(newitem)
+    }
+
+    console.log(saveStatus)
+    
+    var csrftoken = getCookie('csrftoken');
+
+    const options = {
+    headers: {"X-CSRFToken": csrftoken }
+    };
+
+    if(saveStatus.nim == saveMahasiswa.niu){
+        saveStatus.forEach(simpan =>{
+
+            console.log(savePertemuan)
+            console.log(simpan.nim)
+            console.log(simpan.attendance)
+
+            axios.post('http://127.0.0.1:8000/presensi/', {
+                pertemuan: savePertemuan,
+                mahasiswa : simpan.nim,
+                status: simpan.attendance
+            }, options )
+            .then(res => {
+                console.log(res)
+            })
+            .catch(err => {
+                console.log(err.response.request._response)
+            })
+        })
+    }
+    
+}
+
+</script>
+
+{% endblock script %}

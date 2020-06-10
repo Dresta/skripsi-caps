@@ -10,6 +10,7 @@ class Profil(models.Model):
     kode = models.CharField(max_length=100)
     nama = models.CharField(max_length=100)
     ruang = models.CharField(max_length=6)
+    jadwal = models.DecimalField(max_digits=4, decimal_places=2, default=0)
 
     def __str__(self):
         return self.nama
