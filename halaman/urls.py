@@ -14,5 +14,7 @@ urlpatterns = [
     path('dashboard_akademik', views.dashboard_akademik, name='Dashboard'),
     path('video/', views.video, name='video'),
     path('upload/', views.uploadKehadiran, name='upload'),
-    path('presensi/', views.presensi, name='presensi')
+    path('presensi/', views.presensi, name='presensi'),
+    path('kenzy/', views.kenzy, name='kenzy'),
+    path('kenzy2/', views.kodeKenzy, name='script')
 ] 
