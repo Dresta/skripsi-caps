@@ -33,6 +33,7 @@ class Mahasiswa(models.Model):
 class Pertemuan(models.Model):
     matkul = models.ForeignKey(Profil, on_delete=models.CASCADE, related_name='pertemuan')
     waktu_perkuliahan = models.DateField(auto_now=True, blank=True)
+    simpan = models.BooleanField(default=0)
 
     def save(self, *args, **kwargs):
         self.intensitas = Pertemuan.objects.count()

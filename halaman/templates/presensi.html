@@ -38,13 +38,10 @@
 
             <div class="col-6">
             <hr> <h6><strong> Pilih Pertemuan: </strong> </h6> <hr style="margin: 5px 0px 20px">
-                <select name="" id="pertemuan" class=" block h5" style="margin-top: 1vh">
-                </select>
-                
-            </div>
-            
+                <select name="Pilihan" id="pertemuan" class=" block h5" style="margin-top: 1vh">
+                </select> 
+            </div> 
         </form>
-        
     </div>
 </div>
 {% endblock content %}
@@ -117,7 +114,13 @@ axios
         pertemuan = responseThree.data
         console.log(pertemuan)
 
-        pertemuan.forEach(element =>{
+        pertemuan_belum = pertemuan.filter(function(item){
+            return item.simpan == 0;
+        })
+
+        console.log(pertemuan_belum)
+
+        pertemuan_belum.forEach(element =>{
             tampilkanPertemuan(element)
         })
 
@@ -211,10 +214,10 @@ document.getElementById('presensiInputForm').addEventListener('submit', savebatc
 
 function savebatch(e){
     var inputPertemuan = document.getElementById('pertemuan');
-    var savePertemuan = inputPertemuan.value;
+    var savePertemuan = inputPertemuan.value
     console.log(savePertemuan)
 
-    let saveMahasiswa =[];
+    let saveMahasiswa = [];
     let nama = [];
     let niu = [];
 
@@ -269,9 +272,19 @@ function savebatch(e){
     if(saveStatus.nim == saveMahasiswa.niu){
         saveStatus.forEach(simpan =>{
 
-            console.log(savePertemuan)
-            console.log(simpan.nim)
-            console.log(simpan.attendance)
+            //console.log(savePertemuan)
+            //console.log(simpan.nim)
+            //console.log(simpan.attendance)
+
+            axios.put('http://127.0.0.1:8000/pertemuan/' + savePertemuan + '/', {
+                simpan : 1,
+            }, options)
+            .then(res => {
+                console.log(res)
+            })
+            .catch(err => {
+                console.log(err)
+            })
 
             axios.post('http://127.0.0.1:8000/presensi/', {
                 pertemuan: savePertemuan,
@@ -284,6 +297,7 @@ function savebatch(e){
             .catch(err => {
                 console.log(err.response.request._response)
             })
+            
         })
     }
     

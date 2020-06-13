@@ -11,13 +11,14 @@
 {% block content %}
 <div class="card">
     <div class="card-body"> <br>
-        <label style="float:right; border: .2rem solid rgb(0,120,240); 
-        border-radius:8px; margin: 2px 12px; padding-right:4px;
-        color:rgb(63, 63, 63);">
-            <span style=" margin-right:4px; background-color:rgb(0,120,240);
-            padding:6px; border-radius:8px; color:white;"> Jumlah Mahasiswa 
-            </span>{{mahasiswa.count}} Mahasiswa
-        </label>
+        <div style="float:right; z-index:1;">
+            <form method="POST" enctype="multipart/form-data">
+                {% csrf_token %}
+                <input type="file" name="file" >
+                <button type="sumbit"
+                class="btn btn-success">Tambah Mahasiswa</button>
+            </form>
+        </div>
         <h4>Daftar Mahasiswa</h4> <br>
         <div class="scrollable ">
             <table class='table'>

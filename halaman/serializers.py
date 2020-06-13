@@ -22,7 +22,7 @@ class PertemuanSerializer(serializers.ModelSerializer):
     nama_matkul = serializers.SerializerMethodField('get_matkul_name')
     class Meta:
         model = Pertemuan
-        fields = ['url', 'id', 'nama_matkul', 'waktu_perkuliahan']
+        fields = ['url', 'id', 'nama_matkul', 'waktu_perkuliahan', 'simpan',]
 
 
     def get_matkul_name(self, obj):

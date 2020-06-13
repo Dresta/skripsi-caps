@@ -16,6 +16,7 @@ from .forms import PertemuanForm, ProfilForm, VideoForm
 
 from django.core.serializers import serialize
 from rest_framework import viewsets
+from rest_framework.decorators import api_view
 from .serializers import *
 
 # Create your views here.
@@ -147,6 +148,24 @@ def daftarMahasiswa(request):
     presensi = Presensi.objects.filter(pertemuan__matkul=nama_matkul)
     mahasiswa = Mahasiswa.objects.all()
     
+    if request.method == "POST":
+        csv_file = request.FILES.get("file", None)
+
+        if not csv_file.name.endswith(".csv"):
+            messages.error(request, 'File yang dimasukkan bukan csv')
+        
+        data_set = csv_file.read().decode('UTF-8')
+        io_string = io.StringIO(data_set)
+        next(io_string)
+        for column in csv.reader(io_string, delimiter=",", quotechar="|"):
+            _, created = Mahasiswa.objects.get_or_create(
+                niu = column[1], 
+                nim = column[2],
+                nama = column[3],
+                program_studi = column[4],
+                angkatan = column[5],
+            )
+
     context = {
       "hal_daftarMahasiswa" : "active",
       'presensi': presensi, 'mahasiswa':mahasiswa,
@@ -276,6 +295,7 @@ class ProfilViewSet(viewsets.ModelViewSet):
 class MahasiswaViewSet(viewsets.ModelViewSet):
     queryset = Mahasiswa.objects.all().order_by('niu')
     serializer_class = MahasiswaSerializer
+
 
 class PertemuanViewSet(viewsets.ModelViewSet):
     queryset = Pertemuan.objects.all().order_by('matkul')

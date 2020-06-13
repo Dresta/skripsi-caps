@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 
 {% block header %}
-    Daftar Dosen
+    Daftar Mata Kuliah
 {% endblock header %}
 
 {% block sidebar %}
@@ -15,7 +15,7 @@
         style="float:right"> 
             Buat Akun baru
         </button>
-        <h4>Daftar Dosen</h4> <br>
+        <h4>Daftar Mata Kuliah</h4> <br>
         <div class="scrollable ">
             <table class='table'>
                 <th>Nama Mata Kuliah</th>
@@ -30,7 +30,7 @@
                     <td>{{matkul.kode}}</td>
                     <td> {{matkul.ruang}}</td>
                     <td>{{matkul.jadwal}} WIB</td>
-                    <td><a class="btn btn-outline-info" href="{% url 'detail' matkul.id %}">Detail</a></td>
+                    <td><a class="btn btn-outline-danger" href="{% url 'detail' matkul.id %}">hapus</a></td>
                 </tr>
                 {% endfor %}
             </table>
