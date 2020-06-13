@@ -267,11 +267,208 @@ def uploadKehadiran(request):
     }
     return render(request, 'upload.html', context)
 
+def kenzy(request):
+    return render(request, 'kenzy.html')
+
 def kodeKenzy(request):
     #masukkan kode kenzy
+    #komen
+    import numpy as np
+    import pandas as pd
+    import os
+    import csv
+    import cv2
+    import datetime
+    import json
+    from time import sleep
+    from openpyxl.reader.excel import load_workbook
+
+
+    #filename = '../data/Attendance_xlsx/third_year_5sem_IT2.xlsx'
+
+    fname = 'halaman/video/2020-06-02/trainingData.yml'
+    if not os.path.isfile(fname):
+        print('first train the data')
+        exit(0)
+
+
+    names = {}
+    labels = []
+    students = []
+
+
+    # def from_excel_to_csv():
+    #     df = pd.read_excel(filename,index=False)
+    #     df.to_csv('../data.csv')
+
+    def getdata():
+        with open('halaman/video/2020-06-02/data.csv','r') as f:
+            data = csv.reader(f)
+            next(data)
+            lines = list(data)
+            for line in lines:
+                names[int(line[0])] = line[1] 
+
+
+    def  markPresent(name):
+        with open('halaman/video/2020-06-02/data.csv','r') as f:
+            data = csv.reader(f)
+            lines = list(data)
+            # for line in lines:
+            #     line.pop(0)
+            # print(lines)
+            for line in lines:
+                if line[1] == name:
+                    line[-1] = '1'
+                    with open('halaman/video/2020-06-02/data_upload.csv','w') as g:
+                        writer = csv.writer(g,lineterminator='\n')
+                        writer.writerows(lines)
+                        break
+
+
+        
+        # df = pd.read_csv('data.csv')
+        # df.to_excel('data.xlsx',index=False)
+
+    def update_Excel():
+        with open('halaman/video/2020-06-02/data_upload.csv') as f:
+            data = csv.reader(f)
+            lines = list(data)
+            for line in lines:
+                line.pop(0)
+            with open('halaman/video/2020-06-02/data_upload.csv','w') as g:
+                writer = csv.writer(g,lineterminator='\n')
+                writer.writerows(lines)
+                
+        df = pd.read_csv('halaman/video/2020-06-02/data_upload.csv')
+        #df.to_excel('../data.xlsx',index = False)
+
+    def csv_to_json():
+        csvfile = open('halaman/video/2020-06-02/data_upload.csv', 'r')
+        jsonfile = open('halaman/video/2020-06-02/data.json', 'w')
+
+        my_list = []
+        with open('halaman/video/2020-06-02/data_upload.csv', 'r') as csvfile:
+            reader = csv.DictReader(csvfile)
+            for row in reader:
+                name = row["Name"]
+                nim = row["NIM"]
+                attendance = row["Attendance"]
+                my_dict = {"Name":name, "NIM":nim, "Attendance":attendance}   
+                my_list.append(my_dict)
+
+        with open('halaman/video/2020-06-02/data.json', 'w') as outfile:
+            json.dump(my_list, outfile, indent= 4)
+        
+    # def insertdate():
+    #     flag=0
+    #     for i in D.filterdates():
+    #         if str(i.day) == str(datetime.datetime.today().day) and str(i.month) == str(datetime.datetime.today().month) and str(i.year) == str(datetime.datetime.today().year):
+    #             flag=1
+    #     if flag==1:
+    #         wb = load_workbook('../data/Attendance_xlsx/third_year_5sem_IT2.xlsx')
+    #         print('Date:',str(i)[:11],' is written in excel and is a working day')
+    #         sheet = wb.active
+    #         current_row = sheet.max_row 
+    #         current_column = sheet.max_column
+    #         print(current_column)
+    #         sheet.column_dimensions['A'].width = 20
+    #         sheet.column_dimensions['B'].width = 20
+    #         sheet.cell(row=1, column=1).value = "Name"
+    #         sheet.cell(row=1, column=2).value = "Enrollment"
+
+
+    #         current_row = sheet.max_row
+    #         current_column = sheet.max_column
+    #         #sheet.cell(row=1,column=current_column).width = 20
+    #         sheet.cell(row=1, column=current_column+1).value = "".join(str(datetime.datetime.today())[:11])
+            
+    #         # save the file 
+    #         wb.save('../data/Attendance_xlsx/third_year_5sem_IT2.xlsx') 
+        
+    #     else:
+    #         print("this is a holiday popup..ask if they want to continue..")
+
+
+
+    face_cascade = cv2.CascadeClassifier('halaman/video/haarcascade/haarcascade_frontalface_default.xml')
+    cap = cv2.VideoCapture('halaman/video/test6.mp4')
+
+    # cap.set(3,640) # set Width
+    # cap.set(4,480) # set Height
+
+    #from_excel_to_csv() # converting the excel to csv for use
+    getdata() # getting the data from csv in a dictionary
+    print('Total students :',names)
+
+    recognizer = cv2.face.LBPHFaceRecognizer_create() #LOCAL BINARY PATTERNS HISTOGRAMS Face Recognizer
+
+    recognizer.read(fname) # read the trained yml file
+    
+
+    num=0
+    while True:   
+        ret, img = cap.read()
+        num+=1
+        if num == cap.get(cv2.CAP_PROP_FRAME_COUNT):
+            break
+            # return redirect('dashboard')
+        #img = cv2.flip(img, -1)
+        #img = cv2.rotate(img, rotateCode=cv2.ROTATE_90_CLOCKWISE)
+        #img = cv2.rotate(img, rotateCode=cv2.ROTATE_90_COUNTERCLOCKWISE)
+        gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+        equ = cv2.equalizeHist(gray) 
+        final = cv2.medianBlur(equ, 3)
+
+        faces = face_cascade.detectMultiScale(final, 1.3, 5)
+        
+
+        for (x,y,w,h) in faces:
+            cv2.rectangle(img,(x,y),(x+w,y+h),(0,255,0),3)
+            label,confidence = recognizer.predict(gray[y:y+h,x:x+w])
+            print('label:',label)
+            print('confidence:',confidence)
+            predicted_name = names[label]
+            if confidence < 90:
+                confidence = round(confidence)
+                cv2.putText(img, predicted_name +str(confidence) +'%', (x+2,y+h-4), cv2.FONT_HERSHEY_SIMPLEX, 1, (150,255,0),2)
+                labels.append(label)
+                students.append(names[label])
+                totalstudents = set(students)
+                justlabels = set(labels)
+                print('student Recognised : ',totalstudents,justlabels)
+                for i in justlabels:
+                    if labels.count(i)>10:
+                        markPresent(names[label])
+                        csv_to_json()
+            
+    
+            cv2.imshow('Face Recognizer',img)
+            #k = cv2.waitKey(30) & 0xff
+            if cv2.waitKey(1) == ord('a'):
+            #num+=1
+            #if num>200:
+                cap.release()
+                sleep(4)
+                print('we are done!')
+                y=json.dumps(students)
+                print(y)
+                update_Excel()
+                break
+            # else:
+            #     cap.release()
+                
+
+
+    # cv2.destroyAllWindows()
+
+
+    # return redirect('dashboard')
+
     pass
 
-    return render (request, 'video.html', context)
+    return redirect ('presensi')
+
 
 def presensi(request):
     if request.method == "POST":
