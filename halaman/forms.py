@@ -21,6 +21,7 @@ class ProfilForm(forms.ModelForm):
         self.fields['kode'].label = 'Kode Matakuliah'
         self.fields['nama'].label = 'Nama Matakuliah'
         self.fields['ruang'].label = 'Ruang Kuliah'
+        self.fields['jadwal'].label = 'Jadwa Perkuliahan'
 
 class VideoForm(forms.ModelForm):
     class Meta:

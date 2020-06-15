@@ -60,7 +60,13 @@
                                 <tr>
                                     <td>{{presensi.pertemuan.matkul}}</td>
                                     <td>{{presensi.pertemuan.waktu_perkuliahan}}</td>
-                                    <td>{{presensi.status}}</td>
+                                    <td>
+                                    {% if presensi.status == "1" %}
+                                        <p>Hadir</p>
+                                    {% elif presensi.status == "0" %}
+                                        <p>Absen</p>
+                                    {% endif %}
+                                    </td>
                                 </tr>
                             {% endfor %}
                         </table>

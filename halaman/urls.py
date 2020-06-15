@@ -12,9 +12,10 @@ urlpatterns = [
     path('rekap/', views.rekap, name='rekap'),
     path('rekapDetail/<str:pk>', views.rekapDetail, name='rekapDetail'),
     path('dashboard_akademik', views.dashboard_akademik, name='Dashboard'),
+    path('delete/id_akun/<str:pk>', views.hapus_akun, name='hapus_akun'),
     path('video/', views.video, name='video'),
     path('upload/', views.uploadKehadiran, name='upload'),
     path('presensi/', views.presensi, name='presensi'),
-    path('kenzy/', views.kenzy, name='kenzy'),
-    path('kenzy2/', views.kodeKenzy, name='script')
+    # path('kenzy/', views.kenzy, name='kenzy'),
+    path('FaceDetection/', views.faceDetection, name='script')
 ] 

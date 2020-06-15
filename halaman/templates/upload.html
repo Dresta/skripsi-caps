@@ -1,3 +1,35 @@
+
+{% extends 'base.html' %}
+
+{% block header %}
+    Upload Daftar Kehadiran Mahasiswa
+{% endblock header %}
+
+{% load crispy_forms_tags %}
+
+{% block sidebar %}
+    {% include 'adds/sidebar-superadmin.html' %}
+{% endblock sidebar %}
+
+{% block content %}
+<div class="card">
+    <div class="card-body scrollable"> <br>
+    <center>
+        <form method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+            <br>
+            <input type="file" name="file"> <br>
+            <br>
+            <button type="sumbit" action="{% url 'video' %}" name='upload'
+            class="btn btn-primary"
+            >Upload Daftar Presensi</button>
+        </form>
+        <hr>
+    </center>
+    </div>
+</div>
+{% endblock content %}
+{% comment %} 
 <html>
     <head>
         <title></title>
@@ -36,7 +68,7 @@
                                     <label> Upload a CSV File </label>
                                     <input type="file" name="file"> <br>
                                     <br>
-                                    <button type="sumbit" action="{% url 'video' %}">Upload</button>
+                                    <button type="sumbit" action="{% url 'video' %}" name='upload'>Upload</button>
                                 </form>
                             </div>
                         </div>
@@ -45,6 +77,8 @@
             </div>  
         </div>
     </body>
+</html> {% endcomment %}
+
     {% block script %}
     <script>
     $(document).ready(function(){
@@ -52,4 +86,3 @@
     });
     </script>
     {% endblock script %}
-</html>

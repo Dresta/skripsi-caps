@@ -13,7 +13,7 @@
     <div class="card-body"> <br>
         <button class="btn btn-success" onclick="buatAkun()"
         style="float:right"> 
-            Buat Akun baru
+            + Mata Kuliah
         </button>
         <h4>Daftar Mata Kuliah</h4> <br>
         <div class="scrollable ">
@@ -24,13 +24,16 @@
                 <th>Mulai Kuliah</th>
                 <th></th>
             
-                {% for matkul in profil %}
+                {% for akun in profil %}
                 <tr style="margin-left: 2rem" >
-                    <td>{{ matkul.nama }}</td>
-                    <td>{{matkul.kode}}</td>
-                    <td> {{matkul.ruang}}</td>
-                    <td>{{matkul.jadwal}} WIB</td>
-                    <td><a class="btn btn-outline-danger" href="{% url 'detail' matkul.id %}">hapus</a></td>
+                    <td>{{ akun.profil.nama }}</td>
+                    <td>{{akun.profil.kode}}</td>
+                    <td> {{akun.profil.ruang}}</td>
+                    <td>{{akun.profil.jadwal|time:"H:i"}} WIB</td>
+                    <form  method="POST" action="{% url 'hapus_akun' akun.pk  %}">
+                    {% csrf_token %}
+                        <td><button class="btn btn-outline-danger" type="submit" >hapus</button></td>
+                    </form>
                 </tr>
                 {% endfor %}
             </table>

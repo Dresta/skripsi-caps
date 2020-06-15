@@ -10,39 +10,41 @@
 {% endblock sidebar %}
 
 {% block header %}
-    Detail Kehadiran Mahasiswa
+
+    Perkuliahan - {{pertemuan.waktu_perkuliahan}}
 {% endblock header %}
 
 {% block content %}
     <div class="card">
         <div class="card-body">
             <div class="row">
-                <div class="col-md-6 scrollable">
+                <div class="col-md-6">
                     <h4>Mahasiswa Hadir </h4>
                     <table class='table'>
                         <th>Nama Mahasiswa</th> <br>
                         <th>NIM Mahasiswa</th>
-                        <th>status</th>
+                    </table>
+                    <table class='table fixed'>
+                        
                         {% for mhs in hadir %}
                             <tr style="margin-left: 2rem" >
                                 <td>{{mhs.mahasiswa.nama}}</td>
                                 <td>{{mhs.mahasiswa.nim}}</td>
-                                <td>{{mhs.status}}</td>
                             </tr>
                         {% endfor %}
                     </table>
                 </div>
-                <div class="col-md-6 scrollable">
-                    <h4>Mahasiswa Absen</h4> <br>
+                <div class="col-md-6 ">
+                    <h4>Mahasiswa Absen</h4>
                     <table class='table'>
-                        <th>Nama Mahasiswa</th>
+                        <th>Nama Mahasiswa</th> <br>
                         <th>NIM Mahasiswa</th>
-                        <th>Status</th>
+                    </table>
+                    <table class='table fixed'>
                         {% for mhs in absen %}
                             <tr style="margin-left: 2rem" >
                                 <td>{{mhs.mahasiswa.nama}}</td>
                                 <td>{{mhs.mahasiswa.nim}}</td>
-                                <td>{{mhs.status}}</td>
                             </tr>
                         {% endfor %}
                     </table>

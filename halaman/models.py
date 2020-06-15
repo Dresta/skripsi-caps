@@ -10,7 +10,7 @@ class Profil(models.Model):
     kode = models.CharField(max_length=100)
     nama = models.CharField(max_length=100)
     ruang = models.CharField(max_length=6)
-    jadwal = models.DecimalField(max_digits=4, decimal_places=2, default=0)
+    jadwal = models.TimeField()
 
     def __str__(self):
         return self.nama
@@ -35,10 +35,6 @@ class Pertemuan(models.Model):
     waktu_perkuliahan = models.DateField(auto_now=True, blank=True)
     simpan = models.BooleanField(default=0)
 
-    def save(self, *args, **kwargs):
-        self.intensitas = Pertemuan.objects.count()
-        super(Pertemuan, self).save(*args, **kwargs)
-
     def __str__(self):
         return 'id pertemuan %s mata kuliah %s'  % (self.id , self.matkul.nama)
 
@@ -48,10 +44,10 @@ class Presensi(models.Model):
     status = models.CharField(max_length=10, blank=True)
 
     def __str__(self):
-        return ' Pertemuan %s %s - %s' % ( self.pertemuan.id, self.pertemuan.matkul.nama, self.mahasiswa.niu) 
+        return ' Pertemuan %s %s - %s' % ( self.pertemuan.waktu_perkuliahan, self.pertemuan.matkul.nama, self.mahasiswa.niu) 
 
 class Video(models.Model):
-    deskripsi_video = models.CharField(max_length=500)
+    # deskripsi_video = models.CharField(max_length=500)
     videofile = models.FileField(upload_to='video/', null=True, verbose_name='')
     timestamp = models.DateTimeField(auto_now_add=True)
 
@@ -59,7 +55,7 @@ class Video(models.Model):
         ordering = ['-timestamp']
 
     def __str__(self):
-        return self.deskripsi_video
+        return self.videofile.name
 
 class UploadCSV(models.Model):
     nomor = models.IntegerField()

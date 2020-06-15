@@ -75,7 +75,8 @@ def dataAkun(request):
             user_id = last_id,
             kode = data['kode'],
             nama = data['matkul'],
-            ruang = data['ruang'])
+            ruang = data['ruang'],
+            jadwal = data['jadwal'])
 
         profil.save()
         return redirect('dashboard')
@@ -102,14 +103,15 @@ def dashboard(request):
         return redirect('Dashboard')
 
     else:
-        if request.method == "POST":    
-            data = request.POST
-            matkul_id = request.user.profil.id
-            pertemuan = Pertemuan.objects.create(matkul_id=matkul_id)
-            if pertemuan:
-                return redirect('/halaman/dashboard/')
-            else:
-                return HttpResponse("Pertemuan tidak terselenggara")
+        if request.method == "POST": 
+            if 'mulai_kuliah' in request.POST:   
+                data = request.POST
+                matkul_id = request.user.profil.id
+                pertemuan = Pertemuan.objects.create(matkul_id=matkul_id)
+                # if pertemuan:
+                #     return redirect('/halaman/dashboard/')
+                # else:
+                #     return HttpResponse("Pertemuan tidak terselenggara")
 
         context = {
             'nama_matkul' : nama_matkul,
@@ -121,15 +123,19 @@ def dashboard(request):
         return render (request, 'dashboard.html', context)
     
 def dashboard_akademik(request):
-
-    profil = Profil.objects.exclude(id = 1)
-
+    profil = User.objects.exclude(groups = 1)
 
     context = {
-        'profil' : profil ,
+        'profil' : profil , 'user'
         'hal_dashboard_aka': "active",
     }
     return render (request, 'list_dosen.html', context)
+
+def hapus_akun(request, pk):
+    if request.method == "POST":
+        akun = User.objects.get(id = pk)
+        akun.delete()
+    return redirect('Dashboard')
 
 @login_required(login_url='masuk')
 def aktivitas(request):
@@ -149,22 +155,23 @@ def daftarMahasiswa(request):
     mahasiswa = Mahasiswa.objects.all()
     
     if request.method == "POST":
-        csv_file = request.FILES.get("file", None)
+        if 'tambah_mhs' in request.POST:   
+            csv_file = request.FILES.get("file", None)
 
-        if not csv_file.name.endswith(".csv"):
-            messages.error(request, 'File yang dimasukkan bukan csv')
-        
-        data_set = csv_file.read().decode('UTF-8')
-        io_string = io.StringIO(data_set)
-        next(io_string)
-        for column in csv.reader(io_string, delimiter=",", quotechar="|"):
-            _, created = Mahasiswa.objects.get_or_create(
-                niu = column[1], 
-                nim = column[2],
-                nama = column[3],
-                program_studi = column[4],
-                angkatan = column[5],
-            )
+            if not csv_file.name.endswith(".csv"):
+                messages.error(request, 'File yang dimasukkan bukan csv')
+            
+            data_set = csv_file.read().decode('UTF-8')
+            io_string = io.StringIO(data_set)
+            next(io_string)
+            for column in csv.reader(io_string, delimiter=",", quotechar="|"):
+                _, created = Mahasiswa.objects.get_or_create(
+                    niu = column[1], 
+                    nim = column[2],
+                    nama = column[3],
+                    program_studi = column[4],
+                    angkatan = column[5],
+                )
 
     context = {
       "hal_daftarMahasiswa" : "active",
@@ -214,6 +221,7 @@ def rekap(request):
 def rekapDetail(request, pk):
     pertemuan = Pertemuan.objects.get(id=pk)
     presensi = Presensi.objects.filter(pertemuan_id = pk)
+    
 
     hadir = presensi.exclude(status="0")
     absen = presensi.filter(status="0")
@@ -224,21 +232,24 @@ def rekapDetail(request, pk):
     }
     return render(request, 'rekapDetail.html', context)
     
-
 def video(request):
 
     videos = Video.objects.all()
     hapus = UploadCSV.objects.all().delete()
 
+
     if request.method == "POST":
         form = VideoForm (request.POST, request.FILES)
         if form.is_valid():
             form.save()
+            return redirect('script')
     else:
         form = VideoForm()
     
     context={
-        'form':form, 'videos':videos, 
+        'form':form, 
+        'videos':videos, 
+        'hal_upload' : 'active'
     }
     return render(request, 'video.html', context)
 
@@ -267,10 +278,10 @@ def uploadKehadiran(request):
     }
     return render(request, 'upload.html', context)
 
-def kenzy(request):
-    return render(request, 'kenzy.html')
+# def kenzy(request):
+    # return render(request, 'kenzy.html')
 
-def kodeKenzy(request):
+def faceDetection(request):
     #masukkan kode kenzy
     #komen
     import numpy as np
@@ -458,23 +469,24 @@ def kodeKenzy(request):
             # else:
             #     cap.release()
                 
-
-
     # cv2.destroyAllWindows()
-
 
     # return redirect('dashboard')
 
     pass
 
-    return redirect ('presensi')
-
+    return redirect ('upload')
 
 def presensi(request):
+    pertemuan = Pertemuan.objects.all()
+    tersedia = pertemuan.filter(simpan = 0).count() 
+
     if request.method == "POST":
-        return redirect('daftarMahasiswa')
+        if "simpan" in request.POST:
+            return redirect('daftarMahasiswa')
+            
     context={
-        'hal_presensi' : 'active'
+        'hal_presensi' : 'active', 'tersedia':tersedia,
     }
     return  render(request, 'presensi.html', context  )
 
@@ -492,7 +504,6 @@ class ProfilViewSet(viewsets.ModelViewSet):
 class MahasiswaViewSet(viewsets.ModelViewSet):
     queryset = Mahasiswa.objects.all().order_by('niu')
     serializer_class = MahasiswaSerializer
-
 
 class PertemuanViewSet(viewsets.ModelViewSet):
     queryset = Pertemuan.objects.all().order_by('matkul')
