@@ -12,16 +12,14 @@
 
 {% block content %}
 <div class="card">
-    <div class="card-body scrollable"> <br>
+    <div class="card-body scrollable">
     <center>
-        <form method="POST" enctype="multipart/form-data">
+        <form method="POST" enctype="multipart/form-data" class="uploadForm ">
             {% csrf_token %}
-            <br>
-            
-            {{form|crispy}} <br>
+            <br> {{form|crispy}} <br>
+            <span class="fileLabel"> <p>format video .mp4</p> </span>
             <button type="sumbit" class='btn btn-primary'>Execute Face Detection</button>
         </form>
-        <hr>
     </center>
         
 {% comment %} 

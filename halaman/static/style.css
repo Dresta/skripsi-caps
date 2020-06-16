@@ -204,3 +204,15 @@ iframe{
   text-align: left;
   width: 60vh;
 }
+
+.upload{
+    border: 1px;
+    padding: 15%;
+    height: 60%;
+    border-color: black;
+    border-style: dashed;
+}
+
+.fileLabel{
+    
+}

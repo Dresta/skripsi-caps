@@ -27,3 +27,7 @@ class VideoForm(forms.ModelForm):
     class Meta:
         model = Video
         fields = '__all__'
+
+        widgets = {
+            'videofile' : forms.FileInput(attrs={'class':'upload'})
+        }
