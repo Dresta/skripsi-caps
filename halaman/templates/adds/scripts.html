@@ -9,9 +9,10 @@
         axios
         .get('http://jsonplaceholder.typicode.com/users')
         .then(response => {
-            response.data.forEach(element =>{
-                tampilkanPresensi(element)
-            });
+            console.log(response)
+            //response.data.forEach(element =>{
+                //tampilkanPresensi(element)
+            //});
         })
         .catch(err => console.log(err));
     });
@@ -26,7 +27,7 @@
         statusKehadiran.appendChild(status);
         daftarKehadiran.appendChild(daftar);
 
-        statusKehadiran.innerHTML = ""
+        statusKehadiran.innerHTML = " "
         daftarKehadiran.innerHTML = element.name + "<hr>"
 
         daftarKehadiran.className = 'py-2 col-md-9'
@@ -35,7 +36,6 @@
         }else{
             statusKehadiran.className = 'mr-3 py-2 col-md-2 float-right bg-danger'
         }
-
 
         var kehadiran = document.getElementById("kehadiran");
         kehadiran.appendChild(statusKehadiran);

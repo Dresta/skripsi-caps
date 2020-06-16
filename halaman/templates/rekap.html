@@ -4,24 +4,30 @@
     Rekapitulasi Data Presensi
 {% endblock header %}
 
+{% block sidebar %}
+    {% include 'adds/sidebar.html' %}
+{% endblock sidebar %}
+
 {% block content %}
 <div class="card">
     <div class="card-body scrollable">
         <br><h4>Pertemuan Kuliah {{user.profil.nama}}</h4> <br>
         {% for pertemuan in pertemuan %}
-            <div class="center pertemuan-container col-md-10">
+            <div class="center pertemuan-container col-md-8">
                 <div class="row mx-1 my-2">
-                    <table>
+                    <table class="table" style="margin: 0">
                         <tr>
-                            <td class="count col-md-1 h2 py-2 px-3 nomor">
+                            <td class="count col-1 h2 px-2 nomor"
+                            style="vertical-align: center; border: none;">
                             </td>
-                            <td class="col-md-2 my-auto ">
+                            <td class="col-md-6 waktu"
+                            style="vertical-align: center; border: none;">
+                                <h5 style="margin: .5rem 1rem">{{pertemuan.waktu_perkuliahan}}</h5>
+                            </td>
+                            <td class="col-2 my-auto"
+                            style="vertical-align: center ; border: none;">
                                 <a href="{% url 'rekapDetail' pertemuan.id %}" class="btn btn-outline-info"
                                 style="float: right;">Detail</a>
-                            </td>
-                            <td class="col-md-2 my-auto">
-                                <a href="#" style="float: right;">
-                                Download</a>
                             </td>
                         </tr>
                     </table>

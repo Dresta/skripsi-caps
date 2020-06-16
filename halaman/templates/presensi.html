@@ -1,0 +1,314 @@
+
+{% extends 'base.html' %}
+
+{% block header %}
+    Simpan presensi kehadiran Mahasiswa
+{% endblock header %}
+
+{% load crispy_forms_tags %}
+
+{% block sidebar %}
+    {% include 'adds/sidebar-superadmin.html' %}
+{% endblock sidebar %}
+
+{% block content %}
+<div class="card">
+    <div class="card-body"> <br>
+    {% if tersedia > 0 %}
+        <h4>Pilih Pertemuan</h4> <br>
+        <form method="POST" id="presensiInputForm">
+            {% csrf_token %}
+            <div class="col-6 scrollable" style="float:right">
+            <table class="table">
+                <tr>
+                    <th>Nama Mahasiswa</th>
+                    <th>Status</th>
+                </tr>
+                <tr>
+                    <td>
+                        <label id="mahasiswa" name="mahasiswa"></label>
+                    </td>
+                    <td>
+                        <label id="status" name="status"></label> 
+                    </td>
+                </tr>
+            </table>
+            <br>
+            <button type="sumbit" class="btn btn-success btn-block" name="simpan">Simpan</button>
+            </div>
+
+            <div class="col-6">
+            <hr> <h6><strong> Pilih Pertemuan: </strong> </h6> <hr style="margin: 5px 0px 20px">
+                <select name="Pilihan" id="pertemuan" class=" block h5" style="margin-top: 1vh">
+                </select> 
+            </div> 
+        </form>
+    {% else %}
+        <center>
+            <p>Pertemuan Tidak Tersedia</p>
+        </center>
+    {% endif %}
+    </div>
+</div>
+{% endblock content %}
+
+{% block script %}
+<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+<script src= "https://cdnjs.cloudflare.com/ajax/libs/axios/0.19.2/axios.min.js"></script>
+
+<script>
+
+//axios.defaults.xsrfCookieName = 'csrftoken';
+//axios.defaults.xsrfHeaderName = "X-CSRFTOKEN";
+
+
+let one ="http://127.0.0.1:8000/api/mahasiswa/";
+let two ="http://127.0.0.1:8000/api/upload/";
+let three ='http://127.0.0.1:8000/api/pertemuan/';
+
+const requestOne = axios.get(one);
+const requestTwo = axios.get(two);
+const requestThree = axios.get(three);
+
+let mahasiswa = [];
+let status = [];
+let pertemuan = [];
+
+axios
+.all([requestOne, requestTwo, requestThree])
+.then(
+    axios.spread((...responses) => {
+    const responseOne = responses[0];
+    const responseTwo = responses[1];
+    const responseThree = responses[2];
+
+        //daftar mahasiswa semua
+        mahasiswa = responseOne.data
+        //console.log(mahasiswa)
+
+        //daftar hadir kelas
+        dummy = responseTwo.data
+        //console.log(dummy)
+
+        //List Mahasiswa 
+        let listMhs = [];
+        mahasiswa.forEach(element =>{
+            niu = element.niu
+            dummy.filter(function(nomer){
+                if (nomer.nim == niu){
+                    listMhs.push(element)
+                }
+            })
+        })
+        console.log(listMhs)
+
+        //list Status Mahasiswa
+        let listStatus = [];
+        dummy.forEach(element =>{
+            nim = element.nim
+            mahasiswa.filter(function(nomer){
+                if (nomer.niu == nim){
+                    listStatus.push(element)
+                }
+            })
+        })
+        console.log(listStatus)
+    
+        //list pertemuan
+        pertemuan = responseThree.data
+        console.log(pertemuan)
+
+        pertemuan_belum = pertemuan.filter(function(item){
+            return item.simpan == 0;
+        })
+
+        console.log(pertemuan_belum)
+
+        pertemuan_belum.forEach(element =>{
+            tampilkanPertemuan(element)
+        })
+
+        listMhs.forEach(element => {
+            tampilkanMahasiswa(element)
+        })
+
+        listStatus.forEach(element => {
+            tampilkanStatus(element)
+        })
+
+    })
+)
+.catch(errors => {
+    console.error(errors);
+});
+
+function tampilkanPertemuan(element){
+    var selectList = document.getElementById("pertemuan");
+
+    var option = document.createElement("option");
+    option.setAttribute("value", element.id);
+    option.text = element.nama_matkul + ' - ' + element.waktu_perkuliahan;
+    selectList.appendChild(option);
+}
+
+function tampilkanMahasiswa(element){
+    var list = document.createTextNode('');
+    var listMahasiswa = document.createElement('p');
+    var niuMahasiswa = document.createElement('p');
+    var divMahasiswa = document.createElement('div');
+
+    divMahasiswa.setAttribute("name", "listMahasiswa");
+    listMahasiswa.setAttribute("name", "nama");
+    niuMahasiswa.setAttribute("name", "niu");
+    niuMahasiswa.setAttribute("style", "display:none");
+    
+
+    listMahasiswa.appendChild(list);
+    listMahasiswa.innerHTML = element.nama
+    divMahasiswa.appendChild(listMahasiswa)
+    
+    niuMahasiswa.appendChild(list);
+    niuMahasiswa.innerHTML = element.niu 
+    divMahasiswa.appendChild(niuMahasiswa)
+
+    var kehadiran = document.getElementById('mahasiswa');
+    kehadiran.appendChild(divMahasiswa);
+}
+
+function tampilkanStatus(element){
+    var list = document.createTextNode('');
+    var nimStatus = document.createElement('p');
+    var listStatus = document.createElement('p');
+    var divStatus = document.createElement('div');
+
+    divStatus.setAttribute("name", "listStatus");
+    listStatus.setAttribute("name", "attendance");
+    nimStatus.setAttribute("name", "nim");
+    nimStatus.setAttribute("style", "display:none");
+
+    listStatus.appendChild(list);
+    listStatus.innerHTML = element.attendance
+    divStatus.appendChild(listStatus)
+
+    nimStatus.appendChild(list);
+    nimStatus.innerHTML = element.nim 
+    divStatus.appendChild(nimStatus)
+
+    var kehadiran = document.getElementById('status');
+    kehadiran.appendChild(divStatus);
+
+}
+
+function getCookie(name) {
+    var cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        var cookies = document.cookie.split(';');
+        for (var i = 0; i < cookies.length; i++) {
+            var cookie = cookies[i].trim();
+            // Does this cookie string begin with the name we want?
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+document.getElementById('presensiInputForm').addEventListener('submit', savebatch);
+
+function savebatch(e){
+    var inputPertemuan = document.getElementById('pertemuan');
+    var savePertemuan = inputPertemuan.value
+    console.log(savePertemuan)
+
+    let saveMahasiswa = [];
+    let nama = [];
+    let niu = [];
+
+    var namaMhs = document.getElementsByName('nama')
+        namaMhs.forEach(namaMahasiswa =>{
+            nama.push(namaMahasiswa.innerHTML)
+        })
+    var niuMhs = document.getElementsByName('niu')
+        niuMhs.forEach(niuMahasiswa =>{
+            niu.push(niuMahasiswa.innerHTML)
+        })
+
+    for (var i = 0 ; i < namaMhs.length; i++){
+        var newitem = {
+            nama : nama[i],
+            niu : niu[i]
+        }
+        saveMahasiswa.push(newitem)
+    }
+
+    console.log(saveMahasiswa)
+
+    let saveStatus = [];
+    let nim = [];
+    let attendance = [];
+
+    var nimDummy = document.getElementsByName('nim')
+        nimDummy.forEach(dummy =>{
+            nim.push(dummy.innerHTML)
+        })
+    var attendanceDummy = document.getElementsByName('attendance')
+        attendanceDummy.forEach(kehadiran =>{
+            attendance.push(kehadiran.innerHTML)
+        })
+
+    for (var i = 0 ; i < nimDummy.length; i++){
+        var newitem = {
+            nim : nim[i],
+            attendance : attendance[i]
+        }
+        saveStatus.push(newitem)
+    }
+
+    console.log(saveStatus)
+    
+    var csrftoken = getCookie('csrftoken');
+
+    const options = {
+    headers: {"X-CSRFToken": csrftoken }
+    };
+
+    if(saveStatus.nim == saveMahasiswa.niu){
+        saveStatus.forEach(simpan =>{
+
+            //console.log(savePertemuan)
+            //console.log(simpan.nim)
+            //console.log(simpan.attendance)
+
+            axios.put('http://127.0.0.1:8000/api/pertemuan/' + savePertemuan + '/', {
+                simpan : 1,
+            }, options)
+            .then(res => {
+                console.log(res)
+            })
+            .catch(err => {
+                console.log(err)
+            })
+
+            axios.post('http://127.0.0.1:8000/api/presensi/', {
+                pertemuan: savePertemuan,
+                mahasiswa : simpan.nim,
+                status: simpan.attendance
+            }, options )
+            .then(res => {
+                console.log(res)
+            })
+            .catch(err => {
+                console.log(err.response.request._response)
+            })
+            
+        })
+    }
+    
+}
+
+</script>
+
+{% endblock script %}

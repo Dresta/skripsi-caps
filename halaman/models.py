@@ -3,12 +3,14 @@ from django.db import transaction
 from django.db.models import F, Max
 
 from django.contrib.auth.models import User
+
 # Create your models here.
 class Profil(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='profil')
     kode = models.CharField(max_length=100)
     nama = models.CharField(max_length=100)
     ruang = models.CharField(max_length=6)
+    jadwal = models.TimeField()
 
     def __str__(self):
         return self.nama
@@ -26,44 +28,40 @@ class Mahasiswa(models.Model):
     angkatan = models.IntegerField(default=2016)
 
     def __str__(self):
-        return self.nama
+        return ' %s - %s' % ( self.niu, self.nama)
 
 class Pertemuan(models.Model):
     matkul = models.ForeignKey(Profil, on_delete=models.CASCADE, related_name='pertemuan')
-    intensitas = models.IntegerField(default=1)
-
-    def save(self, *args, **kwargs):
-        self.intensitas = Pertemuan.objects.count()
-        super(Pertemuan, self).save(*args, **kwargs)
+    waktu_perkuliahan = models.DateField(auto_now=True, blank=True)
+    simpan = models.BooleanField(default=0)
 
     def __str__(self):
-        return 'pertemuan ke %s mata kuliah %s'  % (self.intensitas + 1, self.matkul.nama)
+        return 'id pertemuan %s mata kuliah %s'  % (self.id , self.matkul.nama)
 
 class Presensi(models.Model):
-    mahasiswa = models.ForeignKey(Mahasiswa, on_delete=models.CASCADE)
     pertemuan = models.ForeignKey(Pertemuan, on_delete=models.CASCADE)
-    waktu_kehadiran = models.DateField(auto_now=True, blank=True)
+    mahasiswa = models.ForeignKey(Mahasiswa, on_delete=models.CASCADE)
     status = models.CharField(max_length=10, blank=True)
 
     def __str__(self):
-        return ' %s pertemuan ke %s %s' % ( self.mahasiswa.niu, self.pertemuan.intensitas + 1, self.pertemuan.matkul.nama,) 
+        return ' Pertemuan %s %s - %s' % ( self.pertemuan.waktu_perkuliahan, self.pertemuan.matkul.nama, self.mahasiswa.niu) 
 
 class Video(models.Model):
-    deskripsi_video = models.CharField(max_length=500)
-    videofile = models.FileField(upload_to='video/%Y-%m-%d/', null=True, verbose_name='')
+    # deskripsi_video = models.CharField(max_length=500)
+    videofile = models.FileField(upload_to='video/', null=True, verbose_name='')
     timestamp = models.DateTimeField(auto_now_add=True)
 
     class Meta:
         ordering = ['-timestamp']
 
     def __str__(self):
-        return self.deskripsi_video
+        return self.videofile.name
 
 class UploadCSV(models.Model):
     nomor = models.IntegerField()
     nama = models.CharField(max_length = 100)
-    nim = models.IntegerField()
+    nim = models.IntegerField(primary_key=True)
     attendance = models.IntegerField(blank=True)
 
     def __str__(self):
-        return self.nama
+        return str(self.nim)

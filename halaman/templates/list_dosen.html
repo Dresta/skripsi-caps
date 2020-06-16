@@ -1,0 +1,50 @@
+{% extends 'base.html' %}
+
+{% block header %}
+    Daftar Mata Kuliah
+{% endblock header %}
+
+{% block sidebar %}
+    {% include 'adds/sidebar-superadmin.html' %}
+{% endblock sidebar %}
+
+{% block content %}
+<div class="card">
+    <div class="card-body"> <br>
+        <button class="btn btn-success" onclick="buatAkun()"
+        style="float:right"> 
+            + Mata Kuliah
+        </button>
+        <h4>Daftar Mata Kuliah</h4> <br>
+        <div class="scrollable ">
+            <table class='table'>
+                <th>Nama Mata Kuliah</th>
+                <th>Kode Mata Kuliah</th>
+                <th>Ruang Kelas</th>
+                <th>Mulai Kuliah</th>
+                <th></th>
+            
+                {% for akun in profil %}
+                <tr style="margin-left: 2rem" >
+                    <td>{{ akun.profil.nama }}</td>
+                    <td>{{akun.profil.kode}}</td>
+                    <td> {{akun.profil.ruang}}</td>
+                    <td>{{akun.profil.jadwal|time:"H:i"}} WIB</td>
+                    <form  method="POST" action="{% url 'hapus_akun' akun.pk  %}">
+                    {% csrf_token %}
+                        <td><button class="btn btn-outline-danger" type="submit" >hapus</button></td>
+                    </form>
+                </tr>
+                {% endfor %}
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock content %}
+{% block script %}
+<script>
+    function buatAkun() {
+        location.replace( '/halaman/registrasi/' )
+    }
+</script>
+{% endblock script %}

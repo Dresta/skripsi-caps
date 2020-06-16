@@ -56,6 +56,14 @@ body{
     overflow-y: auto;
     height:90%;
 }
+.scrollable-md{
+    overflow-y: auto;
+    height:50%;
+}
+.scrollable-sm{
+    overflow-y: auto;
+    height:25%;
+}
 ::-webkit-scrollbar { /* width */
     width: .25rem;
 }
@@ -142,8 +150,69 @@ iframe{
     background-color: dodgerblue;
     border-radius: 20px;
     color: whitesmoke;
+    width: 15% !important;
 }
 
 .keterangan p{
     margin-bottom: .75rem !important;
+}
+
+.fixed_header{
+    width: 100%;
+    table-layout: fixed;
+    border-collapse: collapse;
+}
+
+.fixed_header tbody{
+  display:block;
+  width: 100%;
+  overflow: auto;
+  height: 27vh;
+}
+
+.fixed_header thead tr {
+   display: block;
+}
+
+
+.fixed_header th, .fixed_header td {
+  padding: 10px;
+  text-align: left;
+  width: 60vh;
+}
+
+.fixed{
+    width: 100%;
+    table-layout: fixed;
+    border-collapse: collapse;
+}
+
+.fixed tbody{
+  display:block;
+  width: 100%;
+  overflow: auto;
+  height: 60vh;
+}
+
+.fixed thead tr {
+   display: block;
+}
+
+
+.fixed th, .fixed td {
+  padding: 10px;
+  text-align: left;
+  width: 60vh;
+}
+
+.upload{
+    border: 1px;
+    padding: 15%;
+    height: 60%;
+    border-color: black;
+    border-style: dashed;
+}
+
+.fileLabel{
+    
 }

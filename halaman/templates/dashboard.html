@@ -1,5 +1,9 @@
 {% extends 'base.html' %}
 
+{% block sidebar %}
+    {% include 'adds/sidebar.html' %}
+{% endblock sidebar %}
+
 {% block header %}
     Dashboard Dosen
 {% endblock header %}
@@ -9,7 +13,7 @@
     <div class="card-body">
         <br><h5 class="card-title text-center">Informasi Perkuliahan</h5> <br>
         <div class="scrollable">
-            <div class="konten">
+            <div id="konten">
                 <center>
                     <form method="POST" >
                         {% csrf_token %}
@@ -19,8 +23,10 @@
                             <td> : {% now 'j F Y' %}</td>
                         </tr>
                         <tr>
-                            <td>Nama Mata Kuliah </td>
-                            <td> {{form_pertemuan.as_ul}}</td>
+                            <td>
+                            <label for="nama">Nama Mata Kuliah</label>
+                            </td>
+                            <td> : {{user.profil.nama}}</td>
                         </tr>
                         <tr>
                             <td>Kode Mata Kuliah </td>
@@ -34,10 +40,9 @@
                         </table>
                         <br><br>
                         
-                        <button type="submit" class="btn btn-success" 
-                        id="btn_mulai" action="{% url 'aktivitas' %}">
-                        Mulai Perkuliahan 
-                        </button> 
+                        <button type="submit" class="btn btn-success" id="btn_mulai"
+                        name="mulai_kuliah"></button>
+
                     </form>
                 </center>
             </div>
@@ -47,6 +52,18 @@
 {% endblock content %}
 
 {% block script %}
-    {% include 'adds/scripts.html' %}
+<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+
+<script>
+
+var mulai = document.getElementById("btn_mulai");
+total = {{jumlah}} + 1;
+jumlah ='Mulai Perkuliahan ke - ' + total;
+mulai.innerHTML = jumlah;
+
+</script>
+
 {% endblock script %}
 

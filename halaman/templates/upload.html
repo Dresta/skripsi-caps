@@ -1,0 +1,87 @@
+
+{% extends 'base.html' %}
+
+{% block header %}
+    Upload Daftar Kehadiran Mahasiswa
+{% endblock header %}
+
+{% load crispy_forms_tags %}
+
+{% block sidebar %}
+    {% include 'adds/sidebar-superadmin.html' %}
+{% endblock sidebar %}
+
+{% block content %}
+<div class="card">
+    <div class="card-body scrollable"> <br>
+    <center>
+        <form method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+            <input type="file" name="file" class="upload"> <br>
+            <br>
+            <span class="fileLabel"> <p>format file .csv</p> </span>
+            <button type="sumbit" action="{% url 'video' %}" name='upload'
+            class="btn btn-primary"
+            >Upload Daftar Presensi</button>
+        </form>
+    </center>
+    </div>
+</div>
+{% endblock content %}
+{% comment %} 
+<html>
+    <head>
+        <title></title>
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" 
+        integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+        
+    {% block head %}
+        {% load static %}
+        <link rel="stylesheet" href="{% static 'style.css' %}" type="text/css">
+    {% endblock head %}
+    </head>
+
+    {% load crispy_forms_tags %}
+
+    <body>
+        <div class="main">
+            <div class="row mx-auto"> 
+                <div class="col-md-12">
+                    <nav class="navbar navbar-expand-lg">
+                        {% block kembali %} {% endblock kembali %}
+                        <p class="navbar-brand"> <strong>
+                        Upload Kehadiran Mahasiswa
+                        </strong></p>
+                    </nav> 
+                </div>
+            </div>
+
+            <div class="row mx-auto">
+                <div class="col-md-8">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="row">
+                                <form method="POST" enctype="multipart/form-data">
+                                    {% csrf_token %}
+                                    <br>
+                                    <label> Upload a CSV File </label>
+                                    <input type="file" name="file"> <br>
+                                    <br>
+                                    <button type="sumbit" action="{% url 'video' %}" name='upload'>Upload</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>  
+        </div>
+    </body>
+</html> {% endcomment %}
+
+    {% block script %}
+    <script>
+    $(document).ready(function(){
+        {{hapus}}
+    });
+    </script>
+    {% endblock script %}
