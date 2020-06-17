@@ -32,7 +32,8 @@ class Mahasiswa(models.Model):
 
 class Pertemuan(models.Model):
     matkul = models.ForeignKey(Profil, on_delete=models.CASCADE, related_name='pertemuan')
-    waktu_perkuliahan = models.DateField(auto_now=True, blank=True)
+    tanggal_perkuliahan = models.DateField(auto_now=True, blank=True)
+    waktu_perkuliahan = models.TimeField(auto_now=True, blank=True)
     simpan = models.BooleanField(default=0)
 
     def __str__(self):
@@ -44,7 +45,7 @@ class Presensi(models.Model):
     status = models.CharField(max_length=10, blank=True)
 
     def __str__(self):
-        return ' Pertemuan %s %s - %s' % ( self.pertemuan.waktu_perkuliahan, self.pertemuan.matkul.nama, self.mahasiswa.niu) 
+        return ' %s %s - %s' % (self.pertemuan.matkul.nama,  self.pertemuan.waktu_perkuliahan, self.mahasiswa.niu) 
 
 class Video(models.Model):
     # deskripsi_video = models.CharField(max_length=500)

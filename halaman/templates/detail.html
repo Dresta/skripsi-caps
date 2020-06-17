@@ -17,7 +17,7 @@
     <div class="card">
         <div class="card-body">
             <div class="row">
-                <div class="col-md-12"> 
+                <div class="col-md-8"> 
                     <table class="table">
                         <thead class="thead-dark">
                             <tr>
@@ -43,39 +43,75 @@
                         </tr>
                     </table>    
                 </div>
+                <div class="col-md-4"> 
+                    <table class="table">
+                        <thead class="thead-dark">
+                            <tr>
+                                <th>Mata Kuliah Diambil</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        {% for matkul in matkul %}
+                            <tr>
+                                <td>{{matkul}}</td>
+                                <form  method="POST" action="{% url 'detailPerkuliahan' mahasiswa.niu  matkul.id %}">
+                                {% csrf_token %}
+                                    <td><button class="btn btn-sm btn-outline-primary" type="submit" >Detail Kehadiran</button></td>
+                                </form>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                        
+                    </table>    
+                </div>
             </div>
             <br>
-            <div class="row">
+            
+        </div>
+    </div>
+{% endblock content %}
+
+{% block script %}
+{% endblock script %}
+
+{% comment %} 
+<div class="row">
                 <div class="col-md-12">
                     <div class="scrollable-sm">
                         <table class="table fixed_header">
                             <thead class="thead-dark">
                                 <tr>
-                                    <th width="40%">Mata Kuliah</th>
-                                    <th width="40%">Pelaksanaan Perkuliahan</th>
-                                    <th width="20%">Status</th>
+                                    <th>Mata Kuliah</th>
+                                    <th>Tanggal Kehadiran</th>
+                                    <th>Tanggal Kuliah Terlaksana</th>
                                 </tr>
                             </thead>
-                            {% for presensi in presensi %}
-                                <tr>
-                                    <td>{{presensi.pertemuan.matkul}}</td>
-                                    <td>{{presensi.pertemuan.waktu_perkuliahan}}</td>
-                                    <td>
-                                    {% if presensi.status == "1" %}
-                                        <p>Hadir</p>
-                                    {% elif presensi.status == "0" %}
-                                        <p>Absen</p>
+
+                            {% for p in p %}
+                            <tr>
+                                <td> {{p}} </td>
+                                <td>
+                                {% for k in k %}
+                                    {% if k.pertemuan.matkul == p %}
+                                        | {{k.pertemuan.tanggal_perkuliahan}} |
                                     {% endif %}
-                                    </td>
-                                </tr>
+                                {% endfor %}
+                                </td>
+                                <td>
+                                {% for m in m %}
+                                    {% if m.pertemuan.matkul == p %}
+                                        | {{m.pertemuan.tanggal_perkuliahan}} |
+                                    {% endif %}
+                                {% endfor %}
+                                </td>
+                            </tr>
                             {% endfor %}
                         </table>
                     </div>
                 </div>
-            </div>
-        </div>
-    </div>
-{% endblock content %}
+            </div> 
+{% endcomment %}
 
                 {% comment %} <div class="col-md-4">
                     <table class="table">

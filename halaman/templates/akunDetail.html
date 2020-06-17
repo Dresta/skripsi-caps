@@ -1,0 +1,80 @@
+{% extends 'base.html' %}
+
+{% block kembali %} 
+    <a href="{% url 'Dashboard' %}" 
+    class="kembali"> < Kembali </a>
+{% endblock kembali %}
+
+{% block header %}
+    Detail Mata Kuliah
+{% endblock header %}
+
+{% block sidebar %}
+    {% include 'adds/sidebar-superadmin.html' %}
+{% endblock sidebar %}
+
+{% block content %}
+    <div class="card">
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-12"> 
+                    <table class="table">
+                        <thead class="thead-dark">
+                            <tr>
+                                <th>Data Perkuliahan</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tr>
+                            <td>Mata Kuliah</td>
+                            <td>: {{profil.nama}}</td>
+                        </tr>
+                        <tr>
+                            <td>Kode Mata Kuliah</td>
+                            <td>: {{profil.kode}}</td>
+                        </tr>
+                        <tr>
+                            <td>Waktu Perkuliahan</td>
+                            <td>: {{profil.jadwal}}</td>
+                        </tr>
+                        <tr>
+                            <td>Jumlah Perkuliahan</td>
+                            <td>: {{jumlah}} Kuliah telah terlaksana</td>
+                        </tr>
+                        <tr>
+                            <td>Perkuliahan Terakhir</td>
+                            <td>: {{terakhir.tanggal_perkuliahan}}</td>
+                        </tr>
+                    </table>    
+                </div>
+            </div>
+            <br>
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="scrollable-sm">
+                        <table class="table fixed_header">
+                            <thead class="thead-dark">
+                                <tr>
+                                    <th>Tanggal Perkuliahan</th>
+                                    <th>Waktu Mulai</th>
+                                </tr>
+                            </thead>
+
+                            <tbody>
+                            {% for pertemuan in pertemuan %}
+                                <tr>
+                                    <td>{{pertemuan.tanggal_perkuliahan}}</td>
+                                    <td>{{pertemuan.waktu_perkuliahan}}</td>
+                                </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock content %}
+
+{% block script %}
+{% endblock script %}

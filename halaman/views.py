@@ -121,7 +121,8 @@ def dashboard(request):
         }
         
         return render (request, 'dashboard.html', context)
-    
+
+@login_required(login_url='masuk')
 def dashboard_akademik(request):
     profil = User.objects.exclude(groups = 1)
 
@@ -131,6 +132,20 @@ def dashboard_akademik(request):
     }
     return render (request, 'list_dosen.html', context)
 
+@login_required(login_url='masuk')
+def akunDetail(request, pk):
+    profil = Profil.objects.get(id=pk)
+    pertemuan = profil.pertemuan.all()
+    jumlah = pertemuan.count()
+    terakhir = pertemuan.last()
+
+    context = {
+        'profil':profil, 'pertemuan':pertemuan, 'jumlah':jumlah,
+        'terakhir':terakhir,
+    }
+    return render(request, 'akunDetail.html', context)
+
+@login_required(login_url='masuk')
 def hapus_akun(request, pk):
     if request.method == "POST":
         akun = User.objects.get(id = pk)
@@ -181,7 +196,7 @@ def daftarMahasiswa(request):
     return render(request, 'mahasiswa.html', context)
 
 @login_required(login_url='masuk')
-def detail(request, pk):
+def detailMahasiswa(request, pk):
 
     log_user = request.user
     nama_matkul = request.user.profil
@@ -189,17 +204,36 @@ def detail(request, pk):
     kehadiran = Presensi.objects.filter(pertemuan__in=list_pertemuan)
 
     mahasiswa = Mahasiswa.objects.get(niu=pk)
-    presensi = mahasiswa.presensi_set.all()
-    # jumlah_hadir = presensi.filter(status="1").count()
-    # jumlah_absen = presensi.filter(status="0").count()
-    # total_kehadiran = presensi.exclude(status="0").count()
+    listPresensi = mahasiswa.presensi_set.all()
+
+    selectedId = mahasiswa.presensi_set.values_list('pertemuan__matkul', flat=True).distinct()
+    matkul = Profil.objects.filter(id__in = selectedId)
+    presensi = Presensi.objects.filter(mahasiswa = pk)
 
     context = {
-        'mahasiswa':mahasiswa, 'presensi':presensi,
-        # 'jumlah_hadir' :jumlah_hadir,
-        # 'jumlah_absen':jumlah_absen, 'total_kehadiran':total_kehadiran,
+        'mahasiswa':mahasiswa, 'presensi':presensi, 'matkul':matkul,
+
     }
     return render(request, 'detail.html', context)
+
+@login_required(login_url='masuk')
+def detailPerkuliahan(request, niu, pk):
+    mahasiswa = Mahasiswa.objects.get(niu=niu)
+
+    profil = Profil.objects.get(id = pk)
+
+    presensi = Presensi.objects.filter(pertemuan__matkul__id = pk).filter(mahasiswa = niu)
+    jumlah = presensi.count()
+    kehadiran = presensi.filter(status = 1).count()
+    terakhir = presensi.filter(status = 1).last()
+    batas = jumlah / 2
+
+    print(presensi)
+    context ={
+        'mahasiswa':mahasiswa, 'profil':profil, 'presensi':presensi,
+        'kehadiran':kehadiran, 'jumlah':jumlah, 'terakhir':terakhir, 'batas':batas,
+    }
+    return render(request, 'detailPerkuliahan.html', context)
 
 @login_required(login_url='masuk')
 def rekap(request):
@@ -232,6 +266,7 @@ def rekapDetail(request, pk):
     }
     return render(request, 'rekapDetail.html', context)
     
+@login_required(login_url='masuk')
 def video(request):
 
     videos = Video.objects.all()
@@ -253,6 +288,7 @@ def video(request):
     }
     return render(request, 'video.html', context)
 
+@login_required(login_url='masuk')
 def uploadKehadiran(request):
     hapus = UploadCSV.objects.all().delete()
 
@@ -278,12 +314,22 @@ def uploadKehadiran(request):
     }
     return render(request, 'upload.html', context)
 
-# def kenzy(request):
-    # return render(request, 'kenzy.html')
+@login_required(login_url='masuk')
+def presensi(request):
+    pertemuan = Pertemuan.objects.all()
+    tersedia = pertemuan.filter(simpan = 0).count() 
 
+    if request.method == "POST":
+        if "simpan" in request.POST:
+            return redirect('daftarMahasiswa')
+            
+    context={
+        'hal_presensi' : 'active', 'tersedia':tersedia,
+    }
+    return  render(request, 'presensi.html', context  )
+
+@login_required(login_url='masuk')
 def faceDetection(request):
-    #masukkan kode kenzy
-    #komen
     import numpy as np
     import pandas as pd
     import os
@@ -294,9 +340,6 @@ def faceDetection(request):
     from time import sleep
     from openpyxl.reader.excel import load_workbook
 
-
-    #filename = '../data/Attendance_xlsx/third_year_5sem_IT2.xlsx'
-
     fname = 'halaman/video/2020-06-02/trainingData.yml'
     if not os.path.isfile(fname):
         print('first train the data')
@@ -306,11 +349,6 @@ def faceDetection(request):
     names = {}
     labels = []
     students = []
-
-
-    # def from_excel_to_csv():
-    #     df = pd.read_excel(filename,index=False)
-    #     df.to_csv('../data.csv')
 
     def getdata():
         with open('halaman/video/2020-06-02/data.csv','r') as f:
@@ -325,9 +363,6 @@ def faceDetection(request):
         with open('halaman/video/2020-06-02/data.csv','r') as f:
             data = csv.reader(f)
             lines = list(data)
-            # for line in lines:
-            #     line.pop(0)
-            # print(lines)
             for line in lines:
                 if line[1] == name:
                     line[-1] = '1'
@@ -335,11 +370,6 @@ def faceDetection(request):
                         writer = csv.writer(g,lineterminator='\n')
                         writer.writerows(lines)
                         break
-
-
-        
-        # df = pd.read_csv('data.csv')
-        # df.to_excel('data.xlsx',index=False)
 
     def update_Excel():
         with open('halaman/video/2020-06-02/data_upload.csv') as f:
@@ -352,7 +382,6 @@ def faceDetection(request):
                 writer.writerows(lines)
                 
         df = pd.read_csv('halaman/video/2020-06-02/data_upload.csv')
-        #df.to_excel('../data.xlsx',index = False)
 
     def csv_to_json():
         csvfile = open('halaman/video/2020-06-02/data_upload.csv', 'r')
@@ -371,42 +400,10 @@ def faceDetection(request):
         with open('halaman/video/2020-06-02/data.json', 'w') as outfile:
             json.dump(my_list, outfile, indent= 4)
         
-    # def insertdate():
-    #     flag=0
-    #     for i in D.filterdates():
-    #         if str(i.day) == str(datetime.datetime.today().day) and str(i.month) == str(datetime.datetime.today().month) and str(i.year) == str(datetime.datetime.today().year):
-    #             flag=1
-    #     if flag==1:
-    #         wb = load_workbook('../data/Attendance_xlsx/third_year_5sem_IT2.xlsx')
-    #         print('Date:',str(i)[:11],' is written in excel and is a working day')
-    #         sheet = wb.active
-    #         current_row = sheet.max_row 
-    #         current_column = sheet.max_column
-    #         print(current_column)
-    #         sheet.column_dimensions['A'].width = 20
-    #         sheet.column_dimensions['B'].width = 20
-    #         sheet.cell(row=1, column=1).value = "Name"
-    #         sheet.cell(row=1, column=2).value = "Enrollment"
-
-
-    #         current_row = sheet.max_row
-    #         current_column = sheet.max_column
-    #         #sheet.cell(row=1,column=current_column).width = 20
-    #         sheet.cell(row=1, column=current_column+1).value = "".join(str(datetime.datetime.today())[:11])
-            
-    #         # save the file 
-    #         wb.save('../data/Attendance_xlsx/third_year_5sem_IT2.xlsx') 
-        
-    #     else:
-    #         print("this is a holiday popup..ask if they want to continue..")
-
 
 
     face_cascade = cv2.CascadeClassifier('halaman/video/haarcascade/haarcascade_frontalface_default.xml')
     cap = cv2.VideoCapture('halaman/video/test6.mp4')
-
-    # cap.set(3,640) # set Width
-    # cap.set(4,480) # set Height
 
     #from_excel_to_csv() # converting the excel to csv for use
     getdata() # getting the data from csv in a dictionary
@@ -423,10 +420,7 @@ def faceDetection(request):
         num+=1
         if num == cap.get(cv2.CAP_PROP_FRAME_COUNT):
             break
-            # return redirect('dashboard')
-        #img = cv2.flip(img, -1)
-        #img = cv2.rotate(img, rotateCode=cv2.ROTATE_90_CLOCKWISE)
-        #img = cv2.rotate(img, rotateCode=cv2.ROTATE_90_COUNTERCLOCKWISE)
+
         gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
         equ = cv2.equalizeHist(gray) 
         final = cv2.medianBlur(equ, 3)
@@ -471,24 +465,8 @@ def faceDetection(request):
                 
     # cv2.destroyAllWindows()
 
-    # return redirect('dashboard')
-
     pass
-
     return redirect ('upload')
-
-def presensi(request):
-    pertemuan = Pertemuan.objects.all()
-    tersedia = pertemuan.filter(simpan = 0).count() 
-
-    if request.method == "POST":
-        if "simpan" in request.POST:
-            return redirect('daftarMahasiswa')
-            
-    context={
-        'hal_presensi' : 'active', 'tersedia':tersedia,
-    }
-    return  render(request, 'presensi.html', context  )
 
 
 

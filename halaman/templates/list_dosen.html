@@ -15,13 +15,14 @@
         style="float:right"> 
             + Mata Kuliah
         </button>
-        <h4>Daftar Mata Kuliah</h4> <br>
+        <h4>Search</h4> <br>
         <div class="scrollable ">
             <table class='table'>
                 <th>Nama Mata Kuliah</th>
                 <th>Kode Mata Kuliah</th>
                 <th>Ruang Kelas</th>
                 <th>Mulai Kuliah</th>
+                <th></th>
                 <th></th>
             
                 {% for akun in profil %}
@@ -30,6 +31,10 @@
                     <td>{{akun.profil.kode}}</td>
                     <td> {{akun.profil.ruang}}</td>
                     <td>{{akun.profil.jadwal|time:"H:i"}} WIB</td>
+                    <form  method="POST" action="{% url 'akunDetail' akun.pk  %}">
+                    {% csrf_token %}
+                        <td><button class="btn btn-outline-primary" type="submit" >Detail</button></td>
+                    </form>
                     <form  method="POST" action="{% url 'hapus_akun' akun.pk  %}">
                     {% csrf_token %}
                         <td><button class="btn btn-outline-danger" type="submit" >hapus</button></td>
@@ -44,7 +49,7 @@
 {% block script %}
 <script>
     function buatAkun() {
-        location.replace( '/halaman/registrasi/' )
+        location.replace( '{% url 'daftar' %}' )
     }
 </script>
 {% endblock script %}

@@ -4,6 +4,11 @@
     Registrasi Akun 
 {% endblock header %}
 
+{% block kembali %} 
+    <a href="{% url 'Dashboard' %}" 
+    class="kembali"> < Kembali </a>
+{% endblock kembali %}
+
 {% block sidebar %}
     {% include 'adds/sidebar-superadmin.html' %}
 {% endblock sidebar %}

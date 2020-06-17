@@ -1,0 +1,90 @@
+{% extends 'base.html' %}
+
+{% block kembali %} 
+    <a href="{% url 'detail' mahasiswa.niu %}" 
+    class="kembali"> < Kembali </a>
+{% endblock kembali %}
+
+{% block header %}
+    Presensi {{mahasiswa.nama}} - {{profil.nama}}
+{% endblock header %}
+
+{% block sidebar %}
+    {% include 'adds/sidebar-superadmin.html' %}
+{% endblock sidebar %}
+
+{% block content %}
+    <div class="card">
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-12"> 
+                    <table class="table">
+                        <thead class="thead-dark">
+                            <tr>
+                                <th>Data Perkuliahan</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tr>
+                            <td>Mata Kuliah</td>
+                            <td>: {{profil.nama}}</td>
+                        </tr>
+                        <tr>
+                            <td>Kehadiran Mahasiswa</td>
+                            <td>: <strong> {{kehadiran}} </strong> / {{jumlah}}</td>
+                        </tr>
+                        <tr>
+                            <td>Kehadiran Terakhir</td>
+                            <td>: {{terakhir.pertemuan.waktu_perkuliahan}}</td>
+                        </tr>
+                        <tr>
+                            <td>Status Ujian</td>
+                            <td>: 
+                            {% if kehadiran < batas %}
+                                Belum bisa melakukan Ujian
+                            {% elif kehadiran > batas %}
+                                Bisa melakukan Ujian
+                            {% endif %}
+                            </td>
+                        </tr>
+                    </table>    
+                </div>
+            </div>
+            <br>
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="scrollable-sm">
+                        <table class="table fixed_header">
+                            <thead class="thead-dark">
+                                <tr>
+                                    <th>Tanggal Perkuliahan</th>
+                                    <th>Mulai Perkuliahan</th>
+                                    <th>Status Kehadiran</th>
+                                </tr>
+                            </thead>
+
+                            <tbody>
+                            {% for presensi in presensi %}
+                                <tr>
+                                    <td>{{presensi.pertemuan.tanggal_perkuliahan}}</td>
+                                    <td>{{presensi.pertemuan.waktu_perkuliahan}}</td>
+                                    <td>
+                                    {% if presensi.status != "0" %}
+                                        Hadir
+                                    {% elif presensi.status == "0" %}
+                                        Tidak Hadir
+                                    {% endif %}
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock content %}
+
+{% block script %}
+{% endblock script %}
