@@ -6,7 +6,6 @@ urlpatterns = [
     path('registrasi/', views.daftar, name='daftar'),
     path('dataAkun/', views.dataAkun, name='dataAkun'),
     path('dashboard/', views.dashboard , name='dashboard'),
-    path('aktivitas/', views.aktivitas, name='aktivitas'),
     path('mahasiswa/', views.daftarMahasiswa, name='daftarMahasiswa'),
     path('mahasiswa/<str:pk>', views.detailMahasiswa, name='detail'),
     path('mahasiswa/<str:niu>/<str:pk>', views.detailPerkuliahan, name='detailPerkuliahan'),

@@ -9,7 +9,7 @@ body{
     z-index: 1; /* Stay on top */
     top: 0; /* Stay at the top */
     left: 0;
-    background-color: rgb(5, 0, 20); /* dongker */
+    background-color: #222222; /* grey */
     overflow-x: hidden; /* Disable horizontal scroll */
     padding-top: 20px;
 }
@@ -142,7 +142,19 @@ iframe{
     border-radius: 1rem;
     margin-top: .5rem !important;
     margin-bottom: 1.5rem !important;
-    margin: auto;
+}
+
+.grid-wrapper{
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    grid-gap: 2rem;
+    grid-auto-flow: dense;
+}
+.grid-item{
+    display: flex;
+    box-shadow: -8px 10px 6px -5px rgb(172, 172, 172, 0.5);
+    border-radius: 10px;
+    justify-items: center ;
 }
 
 .nomor{
@@ -211,8 +223,4 @@ iframe{
     height: 60%;
     border-color: black;
     border-style: dashed;
-}
-
-.fileLabel{
-    
 }

@@ -2,7 +2,7 @@
 {% extends 'base.html' %}
 
 {% block header %}
-    Simpan presensi kehadiran Mahasiswa
+    Presensi Kehadiran Mahasiswa
 {% endblock header %}
 
 {% load crispy_forms_tags %}
@@ -15,33 +15,53 @@
 <div class="card">
     <div class="card-body"> <br>
     {% if tersedia > 0 %}
-        <h4>Pilih Pertemuan</h4> <br>
+        <button type="button" class="btn btn-success open" style="float:right"
+        data-toggle="modal" data-target="#myModal"> Upload Kehadiran </button>
+
+        
+        <!-- Modal -->
+        <div class="modal fade" id="myModal" role="dialog">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                    <h4 class="modal-title">Upload Data Kehadiran</h4>
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    </div>
+                    <center>
+                        <div class="modal-body">
+                            <form method="POST" enctype="multipart/form-data">
+                                {% csrf_token %}
+                                <input type="file" name="file" class="btn-block"> <br> <br>
+                                <button type="sumbit" name="kehadiran" class="btn btn-success btn-block" > 
+                                Upload Data Kehadrian Mahasiswa</button>
+                            </form>
+                        </div>
+                    </center>
+                </div>
+            </div>
+        </div>
+        {% comment %} // {% endcomment %}
+        <h4></h4> <br>
         <form method="POST" id="presensiInputForm">
             {% csrf_token %}
-            <div class="col-6 scrollable" style="float:right">
-            <table class="table">
-                <tr>
-                    <th>Nama Mahasiswa</th>
-                    <th>Status</th>
-                </tr>
-                <tr>
-                    <td>
-                        <label id="mahasiswa" name="mahasiswa"></label>
-                    </td>
-                    <td>
-                        <label id="status" name="status"></label> 
-                    </td>
-                </tr>
-            </table>
-            <br>
-            <button type="sumbit" class="btn btn-success btn-block" name="simpan">Simpan</button>
-            </div>
-
-            <div class="col-6">
-            <hr> <h6><strong> Pilih Pertemuan: </strong> </h6> <hr style="margin: 5px 0px 20px">
-                <select name="Pilihan" id="pertemuan" class=" block h5" style="margin-top: 1vh">
+            <div>
+                <h6><strong> Pilih Pertemuan: </strong> </h6> <br>
+                <select name="Pilihan" id="pertemuan" class=" btn-block h5" style="margin-top: 1vh">
                 </select> 
-            </div> 
+            </div> <br>
+            <div class="scrollable-md">
+                <table class="table">
+                    <tr>
+                        <th>Nama Mahasiswa</th>
+                        <th>Status</th>
+                    </tr>
+                    <tr>
+                        <td><label id="mahasiswa" name="mahasiswa"></label></td>
+                        <td><label id="status" name="status"></label> </td>
+                    </tr>
+                </table>
+            </div>
+            <button type="sumbit" class="btn btn-success btn-block" name="simpan">Simpan</button>
         </form>
     {% else %}
         <center>
@@ -56,7 +76,12 @@
 <script src= "https://cdnjs.cloudflare.com/ajax/libs/axios/0.19.2/axios.min.js"></script>
 
 <script>
+$(document).ready(function(){
+    {{hapus}}
+});
+</script>
 
+<script>
 //axios.defaults.xsrfCookieName = 'csrftoken';
 //axios.defaults.xsrfHeaderName = "X-CSRFTOKEN";
 
