@@ -12,7 +12,7 @@ from django.contrib.auth.forms import UserCreationForm
 from .decorators import unauthenticated_user
 
 from .models import Profil, Mahasiswa, Presensi, Pertemuan, Video, UploadCSV
-from .forms import PertemuanForm, ProfilForm, VideoForm
+from .forms import PertemuanForm, ProfilForm, VideoForm, KehadiranForm
 
 from django.core.serializers import serialize
 from rest_framework import viewsets
@@ -127,8 +127,8 @@ def dashboard_akademik(request):
     profil = User.objects.exclude(groups = 1)
 
     context = {
-        'profil' : profil , 'user'
-        'hal_dashboard_aka': "active",
+        'profil' : profil ,
+        "hal_dashboard_aka" : "active",
     }
     return render (request, 'list_dosen.html', context)
 
@@ -181,11 +181,11 @@ def daftarMahasiswa(request):
             next(io_string)
             for column in csv.reader(io_string, delimiter=",", quotechar="|"):
                 _, created = Mahasiswa.objects.get_or_create(
-                    niu = column[1], 
-                    nim = column[2],
-                    nama = column[3],
-                    program_studi = column[4],
-                    angkatan = column[5],
+                    niu = column[0], 
+                    nim = column[1],
+                    nama = column[2],
+                    program_studi = column[3],
+                    angkatan = column[4],
                 )
 
     context = {
@@ -226,7 +226,7 @@ def detailPerkuliahan(request, niu, pk):
     jumlah = presensi.count()
     kehadiran = presensi.filter(status = 1).count()
     terakhir = presensi.filter(status = 1).last()
-    batas = jumlah / 2
+    batas = jumlah * 0.75
 
     print(presensi)
     context ={
@@ -267,17 +267,16 @@ def rekapDetail(request, pk):
     return render(request, 'rekapDetail.html', context)
     
 @login_required(login_url='masuk')
-def video(request):
+def faceDetection(request):
 
     videos = Video.objects.all()
     hapus = UploadCSV.objects.all().delete()
-
 
     if request.method == "POST":
         form = VideoForm (request.POST, request.FILES)
         if form.is_valid():
             form.save()
-            return redirect('script')
+            return redirect('upload')
     else:
         form = VideoForm()
     
@@ -291,26 +290,35 @@ def video(request):
 @login_required(login_url='masuk')
 def uploadKehadiran(request):
     hapus = UploadCSV.objects.all().delete()
-
+    kehadiran = FileKehadiran.objects.all()
     if request.method == "POST":
-        csv_file = request.FILES.get("file", None)
+        if 'fileKehadiran' in request.POST:
+            fileKehadiran = KehadiranForm (request.POST, request.FILES)
+            if fileKehadiran.is_valid():
+                fileKehadiran.save()
+            return redirect('script')
+        # elif 'upload' in request.POST:
+        #     csv_file = request.FILES.get("file", None)
 
-        if not csv_file.name.endswith(".csv"):
-            messages.error(request, 'File yang dimasukkan bukan csv')
-        
-        data_set = csv_file.read().decode('UTF-8')
-        io_string = io.StringIO(data_set)
-        next(io_string)
-        for column in csv.reader(io_string, delimiter=",", quotechar="|"):
-            _, created = UploadCSV.objects.get_or_create(
-                nomor = column[0],
-                nama = column[1],
-                nim = column[2],
-                attendance = column[3]
-            )
-        return redirect('presensi')
+        #     if not csv_file.name.endswith(".csv"):
+        #         messages.error(request, 'File yang dimasukkan bukan csv')
+
+        #     data_set = csv_file.read().decode('UTF-8')
+        #     io_string = io.StringIO(data_set)
+        #     next(io_string)
+        #     for column in csv.reader(io_string, delimiter=",", quotechar="|"):
+        #         _, created = UploadCSV.objects.get_or_create(
+        #             nomor = column[0],
+        #             nama = column[1],
+        #             nim = column[2],
+        #             attendance = column[3]
+        #         )
+        #     return redirect('presensi')
+
+    else:
+        fileKehadiran = KehadiranForm ()
     context ={
-        'hapus' : hapus,
+        'hapus' : hapus, 'fileKehadiran' : fileKehadiran, 
     }
     return render(request, 'upload.html', context)
 
@@ -350,8 +358,8 @@ def presensi(request):
     }
     return  render(request, 'presensi.html', context  )
 
-@login_required(login_url='masuk')
-def faceDetection(request):
+@login_required(login_url='masuk') 
+def script(request): 
     import numpy as np
     import pandas as pd
     import os
@@ -367,7 +375,6 @@ def faceDetection(request):
         print('first train the data')
         exit(0)
 
-
     names = {}
     labels = []
     students = []
@@ -379,7 +386,6 @@ def faceDetection(request):
             lines = list(data)
             for line in lines:
                 names[int(line[0])] = line[1] 
-
 
     def  markPresent(name):
         with open('halaman/video/2020-06-02/data.csv','r') as f:
@@ -422,10 +428,8 @@ def faceDetection(request):
         with open('halaman/video/2020-06-02/data.json', 'w') as outfile:
             json.dump(my_list, outfile, indent= 4)
         
-
-
     face_cascade = cv2.CascadeClassifier('halaman/video/haarcascade/haarcascade_frontalface_default.xml')
-    cap = cv2.VideoCapture('halaman/video/test6.mp4')
+    cap = cv2.VideoCapture('halaman/video/test6.mp4') #ini harusnya bisa dibuat dinamis
 
     #from_excel_to_csv() # converting the excel to csv for use
     getdata() # getting the data from csv in a dictionary
@@ -435,7 +439,6 @@ def faceDetection(request):
 
     recognizer.read(fname) # read the trained yml file
     
-
     num=0
     while True:   
         ret, img = cap.read()
@@ -516,6 +519,10 @@ class PresensiViewSet(viewsets.ModelViewSet):
 class VideoViewSet(viewsets.ModelViewSet):
     queryset = Video.objects.all().order_by('timestamp')
     serializer_class = VideoSerializer
+
+class FileKehadiranViewSet(viewsets.ModelViewSet):
+    queryset = FileKehadiran.objects.all().order_by('timestamp')
+    serializer_class = FileKehadiranSerializer
 
 class UploadCSVViewSet(viewsets.ModelViewSet):
     queryset = UploadCSV.objects.all()

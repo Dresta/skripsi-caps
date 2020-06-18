@@ -15,7 +15,7 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
-from halaman.views import masuk, keluar, UserViewSet, ProfilViewSet, MahasiswaViewSet, PertemuanViewSet, PresensiViewSet, VideoViewSet, UploadCSVViewSet
+from halaman.views import masuk, keluar, UserViewSet, ProfilViewSet, MahasiswaViewSet, PertemuanViewSet, PresensiViewSet, VideoViewSet, UploadCSVViewSet, FileKehadiranViewSet
 
 from django.conf.urls.static import static
 from django.conf import settings
@@ -30,6 +30,7 @@ router.register('mahasiswa', MahasiswaViewSet)
 router.register('pertemuan', PertemuanViewSet)
 router.register('presensi', PresensiViewSet)
 router.register('video', VideoViewSet)
+router.register('FileKehadiran', FileKehadiranViewSet)
 router.register('upload', UploadCSVViewSet)
 
 

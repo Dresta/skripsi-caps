@@ -17,21 +17,19 @@
     <center>
         <form method="POST" enctype="multipart/form-data">
             {% csrf_token %}
-            <input type="file" name="file" class="upload"> <br>
-            <br>
+            <span class="upload btn"> {{fileKehadiran|crispy}}</span> <br> <br>
+            <span class="fileLabel"> <p>format file .csv</p> </span>
+            <button type="sumbit" class='btn btn-success btn-block' name='fileKehadiran'>Execute Face Detection</button>
+        </form>
+            {% comment %} <input type="file" name="file" class="upload">  {% endcomment %}
+            {% comment %} <br><br>
             <span class="fileLabel"> <p>format file .csv</p> </span>
             <button type="sumbit" action="{% url 'video' %}" name='upload'
-            class="btn btn-primary" 
-            >Upload Daftar Presensi</button>
-        </form>
+            class="btn btn-primary" >Upload Daftar Presensi</button> {% endcomment %}
+        {% comment %} </form> {% endcomment %}
     </center>
     </div>
 </div>
 {% endblock content %}
     {% block script %}
-    <script>
-    $(document).ready(function(){
-        {{hapus}}
-    });
-    </script>
     {% endblock script %}

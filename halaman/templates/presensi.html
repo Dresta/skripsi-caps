@@ -27,16 +27,19 @@
                     <h4 class="modal-title">Upload Data Kehadiran</h4>
                     <button type="button" class="close" data-dismiss="modal">&times;</button>
                     </div>
-                    <center>
-                        <div class="modal-body">
-                            <form method="POST" enctype="multipart/form-data">
-                                {% csrf_token %}
-                                <input type="file" name="file" class="btn-block"> <br> <br>
-                                <button type="sumbit" name="kehadiran" class="btn btn-success btn-block" > 
-                                Upload Data Kehadrian Mahasiswa</button>
-                            </form>
-                        </div>
-                    </center>
+                    <div class="modal-body">
+                        <form method="POST" enctype="multipart/form-data">
+                            {% csrf_token %}
+                            <label>File mahasiswa yang akan ditambahkan harus memiliki format .csv 
+                            yang memiliki 4 kolom yang tersusun seperti berikut <br> <br>
+                            <center>
+                                <strong> | Nomor | Nama | NIU | Attendance | </strong></label> <br> <br>
+                            </center>
+                            <input type="file" name="file" class="btn-block"> <br> <br>
+                            <button type="sumbit" name="kehadiran" class="btn btn-success btn-block" > 
+                            Upload Data Kehadrian Mahasiswa</button>
+                        </form>
+                    </div>
                 </div>
             </div>
         </div>
@@ -44,8 +47,8 @@
         <h4></h4> <br>
         <form method="POST" id="presensiInputForm">
             {% csrf_token %}
-            <div>
-                <h6><strong> Pilih Pertemuan: </strong> </h6> <br>
+            <div><br>
+                <h6><strong> Pilih Pertemuan: </strong> </h6>
                 <select name="Pilihan" id="pertemuan" class=" btn-block h5" style="margin-top: 1vh">
                 </select> 
             </div> <br>

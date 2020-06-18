@@ -35,14 +35,14 @@
                         </tr>
                         <tr>
                             <td>Kehadiran Terakhir</td>
-                            <td>: {{terakhir.pertemuan.waktu_perkuliahan}}</td>
+                            <td>: {{terakhir.pertemuan.tanggal_perkuliahan}}</td>
                         </tr>
                         <tr>
                             <td>Status Ujian</td>
                             <td>: 
                             {% if kehadiran < batas %}
                                 Belum bisa melakukan Ujian
-                            {% elif kehadiran > batas %}
+                            {% elif kehadiran >= batas %}
                                 Bisa melakukan Ujian
                             {% endif %}
                             </td>

@@ -1,5 +1,5 @@
 from django import forms
-from halaman.models import Pertemuan, Profil, Video
+from halaman.models import Pertemuan, Profil, Video, FileKehadiran
 
 class PertemuanForm(forms.ModelForm):
     class Meta:
@@ -31,3 +31,8 @@ class VideoForm(forms.ModelForm):
         widgets = {
             'videofile' : forms.FileInput(attrs={'class':'upload'})
         }
+
+class KehadiranForm(forms.ModelForm):
+    class Meta:
+        model = FileKehadiran
+        fields = '__all__'

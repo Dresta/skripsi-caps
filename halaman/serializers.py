@@ -39,6 +39,11 @@ class VideoSerializer(serializers.HyperlinkedModelSerializer):
         model = Video
         fields = "__all__"
 
+class FileKehadiranSerializer(serializers.HyperlinkedModelSerializer):
+    class Meta:
+        model = FileKehadiran
+        fields = "__all__"
+
 class UploadCSVSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = UploadCSV

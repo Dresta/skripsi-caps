@@ -32,8 +32,8 @@ class Mahasiswa(models.Model):
 
 class Pertemuan(models.Model):
     matkul = models.ForeignKey(Profil, on_delete=models.CASCADE, related_name='pertemuan')
-    tanggal_perkuliahan = models.DateField(auto_now=True, blank=True)
-    waktu_perkuliahan = models.TimeField(auto_now=True, blank=True)
+    tanggal_perkuliahan = models.DateField(auto_now_add=True, blank=True)
+    waktu_perkuliahan = models.TimeField(auto_now_add=True, blank=True)
     simpan = models.BooleanField(default=0)
 
     def __str__(self):
@@ -66,3 +66,14 @@ class UploadCSV(models.Model):
 
     def __str__(self):
         return str(self.nim)
+
+class FileKehadiran(models.Model):
+    # deskripsi_file = models.CharField(max_length=500)
+    fileKehadiran = models.FileField(upload_to='kehadiran/', null=True, verbose_name='')
+    timestamp = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ['-timestamp']
+
+    def __str__(self):
+        return self.fileKehadiran.name

@@ -55,6 +55,7 @@
                         <table class="table fixed_header">
                             <thead class="thead-dark">
                                 <tr>
+                                    <th>Perkuliahan</th>
                                     <th>Tanggal Perkuliahan</th>
                                     <th>Waktu Mulai</th>
                                 </tr>
@@ -63,6 +64,7 @@
                             <tbody>
                             {% for pertemuan in pertemuan %}
                                 <tr>
+                                    <td class="pertemuan"></td>
                                     <td>{{pertemuan.tanggal_perkuliahan}}</td>
                                     <td>{{pertemuan.waktu_perkuliahan}}</td>
                                 </tr>
@@ -77,4 +79,10 @@
 {% endblock content %}
 
 {% block script %}
-{% endblock script %}
+<script>
+    var list = document.getElementsByClassName("pertemuan");
+    for (var i = 1  ; i <= list.length; i++) {
+        list[i-1].innerHTML = 'Pertemuan ke - ' + i;
+    }
+</script>
+{% endblock script%}
