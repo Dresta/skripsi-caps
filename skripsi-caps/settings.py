@@ -142,7 +142,7 @@ STATIC_URL = '/static/'
 
 MEDIA_URL = '/halaman/media/'
 
-MEDIA_ROOT = os.path.join(BASE_DIR, '/halaman/')
+MEDIA_ROOT = os.path.join(BASE_DIR, 'halaman/media')
 
 CRISPY_TEMPLATE_PACK = 'uni_form'
 

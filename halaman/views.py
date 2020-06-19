@@ -9,6 +9,8 @@ from django.contrib.auth.models import User
 from django.contrib.auth.models import Group
 from django.contrib.auth.forms import UserCreationForm
 
+from django.core.files.storage import FileSystemStorage
+
 from .decorators import unauthenticated_user
 
 from .models import Profil, Mahasiswa, Presensi, Pertemuan, Video, UploadCSV
@@ -124,7 +126,7 @@ def dashboard(request):
 
 @login_required(login_url='masuk')
 def dashboard_akademik(request):
-    profil = User.objects.exclude(groups = 1)
+    profil = User.objects.exclude(groups = 2)
 
     context = {
         'profil' : profil ,
@@ -252,7 +254,7 @@ def rekap(request):
     return render(request, 'rekap.html', context)
 
 @login_required(login_url='masuk')
-def rekapDetail(request, pk):
+def detailRekap(request, pk):
     pertemuan = Pertemuan.objects.get(id=pk)
     presensi = Presensi.objects.filter(pertemuan_id = pk)
     
@@ -264,7 +266,7 @@ def rekapDetail(request, pk):
         'pertemuan':pertemuan, 'presensi':presensi,
         'hadir':hadir, 'absen':absen,
     }
-    return render(request, 'rekapDetail.html', context)
+    return render(request, 'detailRekap.html', context)
     
 @login_required(login_url='masuk')
 def faceDetection(request):
@@ -322,15 +324,46 @@ def uploadKehadiran(request):
     }
     return render(request, 'upload.html', context)
 
+def coba(request):
+    kehadiran = FileKehadiran.objects.all()
+
+    if request.method == 'POST':
+        if "kehadiran" in request.POST:
+            data = request.POST['dipilih']
+            # fs = FileSystemStorage()
+            # fs.save(data.name, data)
+            print(data)
+            
+
+            csv_file = data
+
+            # if not csv_file.name.endswith(".csv"):
+            #     messages.error(request, 'File yang dimasukkan bukan csv')
+            
+            data_set = csv_file.read().decode('UTF-8')
+            io_string = io.StringIO(data_set)
+            next(io_string)
+            for column in csv.reader(io_string, delimiter=",", quotechar="|"):
+                _, created = UploadCSV.objects.get_or_create(
+                    nomor = column[0],
+                    nama = column[1],
+                    nim = column[2],
+                    attendance = column[3]
+                )
+            return redirect('coba')
+
+
+    context ={
+        'kehadiran':kehadiran,
+    }
+    return render(request, 'coba.html', context)
+
 @login_required(login_url='masuk')
 def presensi(request):
     pertemuan = Pertemuan.objects.all()
     tersedia = pertemuan.filter(simpan = 0).count() 
-    dummy = UploadCSV.objects.all()
-    jumlah_kehadiran = dummy.count()
+    
     hapus = UploadCSV.objects.all().delete()
-
-    print(jumlah_kehadiran)
 
     if request.method == "POST":
         if "simpan" in request.POST:
@@ -352,9 +385,7 @@ def presensi(request):
                     attendance = column[3]
                 )
     context={
-        'hal_presensi' : 'active', 'tersedia':tersedia, 
-        'jumlah_kehadiran':jumlah_kehadiran, 'hapus':hapus,
-
+        'hal_presensi' : 'active', 'tersedia':tersedia, 'hapus':hapus,
     }
     return  render(request, 'presensi.html', context  )
 

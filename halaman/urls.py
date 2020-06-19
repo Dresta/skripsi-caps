@@ -10,7 +10,7 @@ urlpatterns = [
     path('mahasiswa/<str:pk>', views.detailMahasiswa, name='detail'),
     path('mahasiswa/<str:niu>/<str:pk>', views.detailPerkuliahan, name='detailPerkuliahan'),
     path('rekap/', views.rekap, name='rekap'),
-    path('rekap/<str:pk>', views.rekapDetail, name='rekapDetail'),
+    path('rekap/<str:pk>', views.detailRekap, name='detailRekap'),
     path('dashboard_akademik/', views.dashboard_akademik, name='Dashboard'),
     path('matakuliah/<str:pk>', views.detailAkun, name='detailAkun'),
     path('delete/id_akun/<str:pk>', views.hapus_akun, name='hapus_akun'),
@@ -18,4 +18,5 @@ urlpatterns = [
     path('upload/', views.uploadKehadiran, name='upload'),
     path('presensi/', views.presensi, name='presensi'),
     path('FaceDetection/', views.script, name='script'),
+    path('coba/', views.coba, name ='coba'),
 ] 
