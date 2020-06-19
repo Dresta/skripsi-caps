@@ -31,7 +31,7 @@
                     <td>{{akun.profil.kode}}</td>
                     <td> {{akun.profil.ruang}}</td>
                     <td>{{akun.profil.jadwal|time:"H:i"}} WIB</td>
-                    <form  method="POST" action="{% url 'akunDetail' akun.pk  %}">
+                    <form  method="POST" action="{% url 'detailAkun' akun.pk  %}">
                     {% csrf_token %}
                         <td><button class="btn btn-outline-primary" type="submit" >Detail</button></td>
                     </form>

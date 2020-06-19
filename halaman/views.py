@@ -130,10 +130,10 @@ def dashboard_akademik(request):
         'profil' : profil ,
         "hal_dashboard_aka" : "active",
     }
-    return render (request, 'list_dosen.html', context)
+    return render (request, 'dashboardAkademik.html', context)
 
 @login_required(login_url='masuk')
-def akunDetail(request, pk):
+def detailAkun(request, pk):
     profil = Profil.objects.get(id=pk)
     pertemuan = profil.pertemuan.all()
     jumlah = pertemuan.count()
@@ -143,7 +143,7 @@ def akunDetail(request, pk):
         'profil':profil, 'pertemuan':pertemuan, 'jumlah':jumlah,
         'terakhir':terakhir,
     }
-    return render(request, 'akunDetail.html', context)
+    return render(request, 'detailAkun.html', context)
 
 @login_required(login_url='masuk')
 def hapus_akun(request, pk):
