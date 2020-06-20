@@ -9,17 +9,16 @@ from django.contrib.auth.models import User
 from django.contrib.auth.models import Group
 from django.contrib.auth.forms import UserCreationForm
 
-from django.core.files.storage import FileSystemStorage
-
 from .decorators import unauthenticated_user
 
-from .models import Profil, Mahasiswa, Presensi, Pertemuan, Video, UploadCSV
-from .forms import PertemuanForm, ProfilForm, VideoForm, KehadiranForm
+from .models import *
+from .forms import *
+from .serializers import *
 
 from django.core.serializers import serialize
 from rest_framework import viewsets
 from rest_framework.decorators import api_view
-from .serializers import *
+
 
 # Create your views here.
 @unauthenticated_user
@@ -272,7 +271,6 @@ def detailRekap(request, pk):
 def faceDetection(request):
 
     videos = Video.objects.all()
-    hapus = UploadCSV.objects.all().delete()
 
     if request.method == "POST":
         form = VideoForm (request.POST, request.FILES)
@@ -299,23 +297,6 @@ def uploadKehadiran(request):
             if fileKehadiran.is_valid():
                 fileKehadiran.save()
             return redirect('script')
-        # elif 'upload' in request.POST:
-        #     csv_file = request.FILES.get("file", None)
-
-        #     if not csv_file.name.endswith(".csv"):
-        #         messages.error(request, 'File yang dimasukkan bukan csv')
-
-        #     data_set = csv_file.read().decode('UTF-8')
-        #     io_string = io.StringIO(data_set)
-        #     next(io_string)
-        #     for column in csv.reader(io_string, delimiter=",", quotechar="|"):
-        #         _, created = UploadCSV.objects.get_or_create(
-        #             nomor = column[0],
-        #             nama = column[1],
-        #             nim = column[2],
-        #             attendance = column[3]
-        #         )
-        #     return redirect('presensi')
 
     else:
         fileKehadiran = KehadiranForm ()
@@ -326,32 +307,6 @@ def uploadKehadiran(request):
 
 def coba(request):
     kehadiran = FileKehadiran.objects.all()
-
-    if request.method == 'POST':
-        if "kehadiran" in request.POST:
-            data = request.POST['dipilih']
-            # fs = FileSystemStorage()
-            # fs.save(data.name, data)
-            print(data)
-            
-
-            csv_file = data
-
-            # if not csv_file.name.endswith(".csv"):
-            #     messages.error(request, 'File yang dimasukkan bukan csv')
-            
-            data_set = csv_file.read().decode('UTF-8')
-            io_string = io.StringIO(data_set)
-            next(io_string)
-            for column in csv.reader(io_string, delimiter=",", quotechar="|"):
-                _, created = UploadCSV.objects.get_or_create(
-                    nomor = column[0],
-                    nama = column[1],
-                    nim = column[2],
-                    attendance = column[3]
-                )
-            return redirect('coba')
-
 
     context ={
         'kehadiran':kehadiran,
@@ -459,8 +414,9 @@ def script(request):
         with open('halaman/video/2020-06-02/data.json', 'w') as outfile:
             json.dump(my_list, outfile, indent= 4)
         
+    url = 'halaman/video/test6.mp4'
     face_cascade = cv2.CascadeClassifier('halaman/video/haarcascade/haarcascade_frontalface_default.xml')
-    cap = cv2.VideoCapture('halaman/video/test6.mp4') #ini harusnya bisa dibuat dinamis
+    cap = cv2.VideoCapture(url) #ini harusnya bisa dibuat dinamis
 
     #from_excel_to_csv() # converting the excel to csv for use
     getdata() # getting the data from csv in a dictionary

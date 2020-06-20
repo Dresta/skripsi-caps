@@ -11,7 +11,7 @@
         <select name="dipilih" id="">
             <option>Pilih kehadiran</option>
             {% for kehadiran in kehadiran %}
-                <option value="{{ STATIC_URL }}{{kehadiran.fileKehadiran.url}}" >{{kehadiran.fileKehadiran.name}}</option> 
+                <option value="{{kehadiran.fileKehadiran.url}}" >{{kehadiran.fileKehadiran.name}}</option> 
             {% endfor %}
         </select>
         <br> <br>
