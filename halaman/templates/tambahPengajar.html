@@ -1,0 +1,51 @@
+{% extends 'base.html' %}
+
+{% block header %}
+    Tambah Pengajar Mata Kuliah
+{% endblock header %}
+
+{% block sidebar %}
+    {% include 'adds/sidebar-superadmin.html' %}
+{% endblock sidebar %}
+
+{% block kembali %} 
+    <a href="{% url 'Dashboard' %}" 
+    class="kembali"> < Kembali </a>
+{% endblock kembali %}
+
+{% load crispy_forms_tags %}
+
+{% block content %}
+<div class="card">
+    <div class="card-body">  <br>
+    <h4></h4>
+    <br>
+        <div class="col-12 d-flex justify-content-center">
+        <form method="POST" action="" class="col-6">
+                
+                {% csrf_token %}
+                {% comment %} {{pengampuMatkul|crispy}} {% endcomment %}
+                
+                <label>Pilih Mata Kuliah : </label>
+                <select name="matakuliah" class="form-control" required>
+                    {% for profil in profil %}
+                        <option value="{{profil.id}}">{{profil.nama}}</option>
+                    {% endfor %}
+                </select><br> <br>
+
+                <label>Pilih Dosen Pengampu: </label>
+                <select name="akun_dosen" class="form-control" required>
+                    {% for akun in akun %}
+                        <option value="{{akun.id}}">{{akun.username}}</option>
+                    {% endfor %}
+                </select> <br> <br>
+                
+                <button type="submit" class="btn btn-primary btn-block">Simpan</button>
+            </form>
+        </div>
+    </div>
+        
+        
+    </div>
+</div>
+{% endblock content %}

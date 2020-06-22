@@ -11,11 +11,18 @@
 {% block content %}
 <div class="card">
     <div class="card-body"> <br>
-        <button class="btn btn-success" onclick="buatAkun()"
-        style="float:right"> 
-            + Mata Kuliah
-        </button>
-        <h4>Search</h4> <br>
+        <div style="float:right">
+            <button class="btn btn-success mr-2" onclick="tambahPengajar()"> 
+                + pengajar
+            </button>
+            <button class="btn btn-success mr-2" onclick="buatAkun()"> 
+                + Akun Dosen
+            </button>
+            <button class="btn btn-success" onclick="buatMatkul()"> 
+                + Mata Kuliah
+            </button>
+        </div>
+         <h4></h4> <br> <br> <br>  {% comment %}Search{% endcomment %}
         <div class="scrollable ">
             <table class='table'>
                 <th>Nama Mata Kuliah</th>
@@ -24,18 +31,20 @@
                 <th>Mulai Kuliah</th>
                 <th></th>
                 <th></th>
+                <th></th>
             
-                {% for akun in profil %}
+                {% for profil in profil %}
+                
                 <tr style="margin-left: 2rem" >
-                    <td>{{ akun.profil.nama }}</td>
-                    <td>{{akun.profil.kode}}</td>
-                    <td> {{akun.profil.ruang}}</td>
-                    <td>{{akun.profil.jadwal|time:"H:i"}} WIB</td>
-                    <form  method="POST" action="{% url 'detailAkun' akun.pk  %}">
+                    <td>{{ profil.nama }}</td>
+                    <td>{{profil.kode}} </td>
+                    <td> {{profil.ruang}}</td>
+                    <td>{{profil.jadwal|time:"H:i"}} WIB</td>
+                    <form  method="POST" action="{% url 'detailAkun' profil.pk  %}">
                     {% csrf_token %}
                         <td><button class="btn btn-outline-primary" type="submit" >Detail</button></td>
                     </form>
-                    <form  method="POST" action="{% url 'hapus_akun' akun.pk  %}">
+                    <form  method="POST" action="{% url 'hapus_akun' profil.pk  %}">
                     {% csrf_token %}
                         <td><button class="btn btn-outline-danger" type="submit" >hapus</button></td>
                     </form>
@@ -50,6 +59,12 @@
 <script>
     function buatAkun() {
         location.replace( '{% url 'daftar' %}' )
+    }
+    function buatMatkul() {
+        location.replace( '{% url 'dataAkun' %}' )
+    }
+    function tambahPengajar() {
+        location.replace( '{% url 'tambahPengajar' %}' )
     }
 </script>
 {% endblock script %}

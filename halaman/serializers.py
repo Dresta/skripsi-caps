@@ -5,12 +5,17 @@ from .models import *
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ['url', 'username', 'groups']
+        fields = ['id', 'url', 'username', 'groups']
 
 class ProfilSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Profil
-        fields = ['user', 'id', 'kode', 'nama', 'ruang']
+        fields = ['id', 'kode', 'nama', 'ruang']
+
+class MatkulSerializer(serializers.HyperlinkedModelSerializer):
+    class Meta:
+        model = Matkul
+        fields = ['id', 'user', 'profil']
 
 class MahasiswaSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
@@ -19,14 +24,14 @@ class MahasiswaSerializer(serializers.HyperlinkedModelSerializer):
 
 
 class PertemuanSerializer(serializers.ModelSerializer):
-    nama_matkul = serializers.SerializerMethodField('get_matkul_name')
+    profil = serializers.SerializerMethodField('get_profil_name')
     class Meta:
         model = Pertemuan
-        fields = ['url', 'id', 'nama_matkul', 'waktu_perkuliahan', 'tanggal_perkuliahan', 'simpan',]
+        fields = ['url', 'id', 'profil', 'waktu_perkuliahan', 'tanggal_perkuliahan', 'simpan',]
 
 
-    def get_matkul_name(self, obj):
-        return obj.matkul.nama
+    def get_profil_name(self, obj):
+        return obj.profil.nama
 
 
 class PresensiSerializer(serializers.ModelSerializer):

@@ -6,7 +6,6 @@ from django.contrib.auth.models import User
 
 # Create your models here.
 class Profil(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='profil')
     kode = models.CharField(max_length=100)
     nama = models.CharField(max_length=100)
     ruang = models.CharField(max_length=6)
@@ -14,6 +13,16 @@ class Profil(models.Model):
 
     def __str__(self):
         return self.nama
+
+class Matkul(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='user')
+    profil = models.ForeignKey(Profil, on_delete=models.CASCADE, related_name='profil')
+
+    class Meta:
+        ordering = ['profil']
+
+    def __str__(self):
+        return self.profil.nama + ' - ' + self.user.username
 
 class Mahasiswa(models.Model):
     PRODI=(
@@ -31,13 +40,14 @@ class Mahasiswa(models.Model):
         return ' %s - %s' % ( self.niu, self.nama)
 
 class Pertemuan(models.Model):
-    matkul = models.ForeignKey(Profil, on_delete=models.CASCADE, related_name='pertemuan')
+    profil = models.ForeignKey(Profil, on_delete=models.CASCADE, related_name='pertemuan')
+    pengajar = models.CharField(max_length=100)
     tanggal_perkuliahan = models.DateField(auto_now_add=True, blank=True)
     waktu_perkuliahan = models.TimeField(auto_now_add=True, blank=True)
     simpan = models.BooleanField(default=0)
 
     def __str__(self):
-        return 'id pertemuan %s mata kuliah %s'  % (self.id , self.matkul.nama)
+        return 'id pertemuan %s mata kuliah %s'  % (self.id , self.profil.nama)
 
 class Presensi(models.Model):
     pertemuan = models.ForeignKey(Pertemuan, on_delete=models.CASCADE)

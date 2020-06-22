@@ -48,7 +48,7 @@
             {% csrf_token %}
             <div><br>
                 <h6><strong> Pilih Pertemuan: </strong> </h6>
-                <select name="Pilihan" id="pertemuan" class=" btn-block h5" style="margin-top: 1vh">
+                <select name="Pilihan" id="pertemuan" class=" form-control" style="margin-top: 1vh">
                 </select> 
             </div> <br>
             <div class="scrollable-md">
@@ -173,7 +173,7 @@ function tampilkanPertemuan(element){
 
     var option = document.createElement("option");
     option.setAttribute("value", element.id);
-    option.text = element.nama_matkul + ' - ' + element.waktu_perkuliahan;
+    option.text = element.profil + ' - ' + element.tanggal_perkuliahan + ' | ' + element.waktu_perkuliahan;
     selectList.appendChild(option);
 }
 

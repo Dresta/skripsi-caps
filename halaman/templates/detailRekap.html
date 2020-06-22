@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 
 {% block kembali %} 
-    <a href="{% url 'rekap' %}" 
+    <a href="{% url 'rekap' matkul.id %}" 
     class="kembali"> < Kembali </a>
 {% endblock kembali %}
 
@@ -10,7 +10,6 @@
 {% endblock sidebar %}
 
 {% block header %}
-
     Detail Pertemuan {{pertemuan.tanggal_perkuliahan}}
 {% endblock header %}
 

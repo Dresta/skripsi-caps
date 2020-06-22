@@ -19,10 +19,10 @@
                 <div class="grid-item">
                     <div style="margin: 2vh 4vh;">
                         <h5> <span class="count">dummy</span></h5>
-                        <h6>{{pertemuan.tanggal_perkuliahan}} - {{pertemuan.waktu_perkuliahan}}</h6>
+                        <h6>{{pertemuan.pengajar}} - {{pertemuan.tanggal_perkuliahan}} | {{pertemuan.waktu_perkuliahan}}</h6>
                     </div>
                     <div style="margin-left:auto; border-radius:10px;">
-                        <a href="{% url 'detailRekap' pertemuan.id %}" class=" h-100 btn btn-info"
+                        <a href="{% url 'detailRekap' matkul.id pertemuan.id %}" class=" h-100 btn btn-info"
                         style="width:25vh; padding-top:4.5vh"> <h5>Detail</h5></a> 
                     </div>
                 </div>
