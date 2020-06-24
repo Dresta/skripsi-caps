@@ -6,7 +6,6 @@
     </svg> {% endcomment %}
     <h5>Sistem presensi dan monitoring mahasiswa</h5>
     <br><br>
-    <a href="{% url 'dashboard' %}" class="{{hal_dashboard}}">Dashboard</a>
-    {% comment %} <a href="{% url 'daftarMahasiswa' %}" class="{{hal_daftarMahasiswa}}">Mahasiswa</a> {% endcomment %}
-    <a href="{% url 'rekap' %}" class="{{hal_rekap}}">Rekapitulasi</a>
+    <a href="{% url 'perkuliahan' matkul.id %}" class="{{hal_dashboard}}">Dashboard</a>
+    <a href="{% url 'rekap'  matkul.id %}" class="{{hal_rekap}}">Rekapitulasi</a>
 </div>

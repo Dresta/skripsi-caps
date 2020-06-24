@@ -1,0 +1,105 @@
+{% extends 'base.html' %}
+
+{% block header %}
+    Dashboard Akademik
+{% endblock header %}
+
+{% block sidebar %}
+    {% include 'adds/sidebar-superadmin.html' %}
+{% endblock sidebar %}
+
+{% block content %}
+<div class="card">
+    <div class="card-body"> <br>
+        <div class="btn-group mx-3" style="float:right;">
+            <button type="button" class="btn btn-success dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                + Data 
+            </button>
+            <div class="dropdown-menu dropdown-menu-right">
+                <a class="dropdown-item" href="{% url 'tambahDosen' %}">Dosen</a>
+                <a class="dropdown-item" href="{% url 'tambahMatkul' %}">Mata Kuliah</a>
+                <div class="dropdown-divider"></div>
+                <a class="dropdown-item" href="{% url 'tambahPengajar' %}">Pengajar</a>
+            </div>
+        </div>
+        <br>
+        <ul class="nav nav-tabs nav-justified" id="myTab" role="tablist">
+            <li class="nav-item">
+                <a class="nav-link active" id="tab-dosen" data-toggle="tab" href="#dosen" role="tab" aria-controls="dosen" aria-selected="true">
+                Daftar Dosen
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" id="tab-matkul" data-toggle="tab" href="#matkul" role="tab" aria-controls="matkul" aria-selected="false">
+                Daftar Mata Kuliah</a>
+            </li>
+        </ul>
+
+            <!-- Tab panes -->
+        <div class="tab-content">
+            <div class="tab-pane active" id="dosen" role="tabpanel" aria-labelledby="tab-dosen">
+                <div class="scrollable">
+                    <table class='table'>
+                        <th>Username Dosen</th>
+                        <th>Nama Awal Dosen</th>
+                        <th>Nama Akhir Dosen</th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                    
+                        {% for dosen in dosen %}
+                        
+                        <tr style="margin-left: 2rem" >
+                            <td>{{ dosen.username }}</td>
+                            <td>{{dosen.first_name}} </td>
+                            <td> {{dosen.last_name}}</td>
+                            <td></td>
+                            <form  method="POST" action="{% url 'detailDosen' dosen.pk  %}">
+                            {% csrf_token %}
+                                <td><button class="btn btn-outline-primary mr-3" style="float:right" type="submit" >Detail</button></td>
+                            </form>
+                            <form  method="POST" action="{% url 'hapus_akun' dosen.pk  %}">
+                            {% csrf_token %}
+                                <td><button class="btn btn-outline-danger"  style="float:right" type="submit" >hapus</button></td>
+                            </form>
+                        </tr>
+                        {% endfor %}
+                    </table>
+                </div>
+            </div>
+
+            <div class="tab-pane" id="matkul" role="tabpanel" aria-labelledby="tab-matkul">
+                <div class="scrollable">
+                    <table class='table'>
+                        <th>Nama Mata Kuliah</th>
+                        <th>Waktu Kuliah</th>
+                        <th>Ruang Kelas</th>
+                        <th></th>
+                        <th></th>
+                    
+                        {% for profil in profil %}
+                        
+                        <tr style="margin-left: 2rem" >
+                            <td>{{ profil.nama }}</td>
+                            <td> {{profil.hari}} - {{profil.jadwal|time:"H:i"}} WIB</td>
+                            <td> {{profil.ruang}}</td>
+                            <form  method="POST" action="{% url 'detailMatkul' profil.pk  %}">
+                            {% csrf_token %}
+                                <td><button class="btn btn-outline-primary"  style="float:right" type="submit" >Detail</button></td>
+                            </form>
+                            <form  method="POST" action="{% url 'hapus_akun' profil.pk  %}">
+                            {% csrf_token %}
+                                <td><button class="btn btn-outline-danger"  style="float:right" type="submit" >hapus</button></td>
+                            </form>
+                        </tr>
+                        {% endfor %}
+                    </table>
+                </div>
+            </div>
+            
+        </div>
+    </div>
+</div>
+{% endblock content %}
+{% block script %}
+{% endblock script %}

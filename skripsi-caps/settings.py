@@ -126,7 +126,7 @@ REST_FRAMEWORK = {
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Asia/Jakarta'
 
 USE_I18N = True
 
@@ -142,7 +142,7 @@ STATIC_URL = '/static/'
 
 MEDIA_URL = '/halaman/media/'
 
-MEDIA_ROOT = os.path.join(BASE_DIR, '/halaman/')
+MEDIA_ROOT = os.path.join(BASE_DIR, 'halaman/media')
 
 CRISPY_TEMPLATE_PACK = 'uni_form'
 

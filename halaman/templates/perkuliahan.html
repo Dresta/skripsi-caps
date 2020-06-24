@@ -8,6 +8,11 @@
     Dashboard Dosen
 {% endblock header %}
 
+{% block kembali %} 
+    <a href="{% url 'dashboardDosen' %}" 
+    class="kembali"> < Kembali </a>
+{% endblock kembali %}
+
 {% block content %}
 <div class="card">
     <div class="card-body">
@@ -26,23 +31,23 @@
                             <td>
                             <label for="nama">Nama Mata Kuliah</label>
                             </td>
-                            <td> : {{user.profil.nama}}</td>
+                            <td> : {{matkul.profil.nama}}</td>
                         </tr>
                         <tr>
                             <td>Kode Mata Kuliah </td>
-                            <td> : {{user.profil.kode}}</td>
+                            <td> : {{matkul.profil.kode}}</td>
 
                         </tr>
                         <tr>
                             <td>Ruang kelas </td>
-                            <td> : {{user.profil.ruang }}</td>
+                            <td> : {{matkul.profil.ruang }}</td>
                         </tr>
                         </table>
                         <br><br>
                         
                         <button type="submit" class="btn btn-success" id="btn_mulai"
                         name="mulai_kuliah"></button>
-
+                        
                     </form>
                 </center>
             </div>

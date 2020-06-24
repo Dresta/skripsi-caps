@@ -7,8 +7,9 @@
 
     <body>
         <div class="row h-100 w-100">
-            <div class="col-5" style="background-color:lightgray;">            
-                <br><h2>Sistem Monitoring dan Presensi Mahasiswa</h2>
+            <div class="col-5" style="background-color:#0c1f33;"> <br> <br>      
+                <h2 style="color:white; float:right; text-align:right; margin-right:8vh;">
+                    Sistem Presensi <br> berbasis Face Detection</h2>
                 <center>
                     <svg viewBox="0 0 69 72" fill="none" xmlns="http://www.w3.org/2000/svg"
                     style=" margin-top:20%; max-width:300;" >
@@ -19,7 +20,7 @@
             </div>
 
             <div class="col-7">
-                <div class="login" style="position:absolute; padding:25vh 35vh;">
+                <div class="login" style="position:absolute; padding:25vh 35vh;"> <br>
                     <div>
                         <center>
                         {% if messages %}
@@ -31,6 +32,7 @@
                         {% endif %}
                         </center>
                         <h2><b>Log</b>in</h2>
+                        <p></p>
                             <center>
                                 <form method="POST" action="">
                                 {% csrf_token %}

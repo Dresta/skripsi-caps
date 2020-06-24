@@ -1,0 +1,76 @@
+{% extends 'base.html' %}
+
+{% block kembali %} 
+    <a href="{% url 'daftarMahasiswa' %}" 
+    class="kembali"> < Kembali </a>
+{% endblock kembali %}
+
+{% block header %}
+    Detail Kehadiran Mahasiswa
+{% endblock header %}
+
+{% block sidebar %}
+    {% include 'adds/sidebar-superadmin.html' %}
+{% endblock sidebar %}
+
+{% block content %}
+    <div class="card">
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-8"> 
+                    <table class="table">
+                        <thead class="thead-dark">
+                            <tr>
+                                <th>Informasi Umum</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tr>
+                            <td>Nama</td>
+                            <td>: {{mahasiswa.nama}}</td>
+                        </tr>
+                        <tr>
+                            <td>NIM</td>
+                            <td>: {{mahasiswa.nim}}</td>
+                        </tr>
+                        <tr>
+                            <td>Angkatan</td>
+                            <td>: {{mahasiswa.angkatan}}</td>
+                        </tr>
+                        <tr>
+                            <td>Program Studi</td>
+                            <td>: {{mahasiswa.program_studi}}</td>
+                        </tr>
+                    </table>    
+                </div>
+                <div class="col-md-4"> 
+                    <table class="table">
+                        <thead class="thead-dark">
+                            <tr>
+                                <th>Mata Kuliah Diambil</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        {% for matkul in matkul %}
+                            <tr>
+                                <td>{{matkul}}</td>
+                                <form  method="POST" action="{% url 'detailPerkuliahan' mahasiswa.niu  matkul.id %}">
+                                {% csrf_token %}
+                                    <td><button class="btn btn-sm btn-outline-primary" type="submit" >Detail Kehadiran</button></td>
+                                </form>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                        
+                    </table>    
+                </div>
+            </div>
+            <br>
+            
+        </div>
+    </div>
+{% endblock content %}
+
+{% block script %}
+{% endblock script %}

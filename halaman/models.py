@@ -6,14 +6,31 @@ from django.contrib.auth.models import User
 
 # Create your models here.
 class Profil(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='profil')
+    HARI=(
+        ('Senin', 'Senin'),
+        ('Selasa', 'Selasa'),
+        ('Rabu', 'Rabu'),
+        ('Kamis', 'Kamis'),
+        ('Jumat', 'Jumat'),
+    )
     kode = models.CharField(max_length=100)
     nama = models.CharField(max_length=100)
     ruang = models.CharField(max_length=6)
+    hari = models.CharField(choices=HARI, max_length=100)
     jadwal = models.TimeField()
 
     def __str__(self):
         return self.nama
+
+class Matkul(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='user')
+    profil = models.ForeignKey(Profil, on_delete=models.CASCADE, related_name='profil')
+
+    class Meta:
+        ordering = ['profil']
+
+    def __str__(self):
+        return self.profil.nama + ' - ' + self.user.username
 
 class Mahasiswa(models.Model):
     PRODI=(
@@ -31,12 +48,14 @@ class Mahasiswa(models.Model):
         return ' %s - %s' % ( self.niu, self.nama)
 
 class Pertemuan(models.Model):
-    matkul = models.ForeignKey(Profil, on_delete=models.CASCADE, related_name='pertemuan')
-    waktu_perkuliahan = models.DateField(auto_now=True, blank=True)
+    profil = models.ForeignKey(Profil, on_delete=models.CASCADE, related_name='pertemuan')
+    pengajar = models.CharField(max_length=100)
+    tanggal_perkuliahan = models.DateField(auto_now_add=True, blank=True)
+    waktu_perkuliahan = models.TimeField(auto_now_add=True, blank=True)
     simpan = models.BooleanField(default=0)
 
     def __str__(self):
-        return 'id pertemuan %s mata kuliah %s'  % (self.id , self.matkul.nama)
+        return 'id pertemuan %s mata kuliah %s'  % (self.id , self.profil.nama)
 
 class Presensi(models.Model):
     pertemuan = models.ForeignKey(Pertemuan, on_delete=models.CASCADE)
@@ -44,7 +63,7 @@ class Presensi(models.Model):
     status = models.CharField(max_length=10, blank=True)
 
     def __str__(self):
-        return ' Pertemuan %s %s - %s' % ( self.pertemuan.waktu_perkuliahan, self.pertemuan.matkul.nama, self.mahasiswa.niu) 
+        return ' %s %s - %s' % (self.pertemuan.matkul.nama,  self.pertemuan.waktu_perkuliahan, self.mahasiswa.niu) 
 
 class Video(models.Model):
     # deskripsi_video = models.CharField(max_length=500)
@@ -65,3 +84,14 @@ class UploadCSV(models.Model):
 
     def __str__(self):
         return str(self.nim)
+
+class FileKehadiran(models.Model):
+    # deskripsi_file = models.CharField(max_length=500)
+    fileKehadiran = models.FileField(upload_to='kehadiran/', null=True, verbose_name='')
+    timestamp = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ['-timestamp']
+
+    def __str__(self):
+        return self.fileKehadiran.name

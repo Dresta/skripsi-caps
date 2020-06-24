@@ -1,27 +1,5 @@
 from django import forms
-from halaman.models import Pertemuan, Profil, Video
-
-class PertemuanForm(forms.ModelForm):
-    class Meta:
-        model = Pertemuan
-        fields = ['matkul',]
-
-    def __init__(self, *args , **kwargs): 
-        super(PertemuanForm, self).__init__(**kwargs)
-        self.fields['matkul'].label = ''
-
-class ProfilForm(forms.ModelForm):
-    class Meta:
-        model = Profil
-        exclude = ('user',)
-    
-    def __init__(self, *args, **kwargs):
-        super(ProfilForm, self).__init__(*args, **kwargs)
-        # self.fields['user'].label = 'Nama Akun Dosen'
-        self.fields['kode'].label = 'Kode Matakuliah'
-        self.fields['nama'].label = 'Nama Matakuliah'
-        self.fields['ruang'].label = 'Ruang Kuliah'
-        self.fields['jadwal'].label = 'Jadwa Perkuliahan'
+from halaman.models import Video, FileKehadiran, Matkul
 
 class VideoForm(forms.ModelForm):
     class Meta:
@@ -31,3 +9,22 @@ class VideoForm(forms.ModelForm):
         widgets = {
             'videofile' : forms.FileInput(attrs={'class':'upload'})
         }
+
+class KehadiranForm(forms.ModelForm):
+    class Meta:
+        model = FileKehadiran
+        fields = '__all__'
+
+class MatkulForm(forms.ModelForm):
+    
+    class Meta:
+        model = Matkul
+        fields = '__all__'
+
+        widgets = {
+            'user' : forms.Select(attrs={'class':'form-control'}),
+            'profil' : forms.Select(attrs={'class':'form-control'})
+        }
+        # def __init__(self,matkul,*args,**kwargs):
+        #     super (MatkulForm,self ).__init__(*args,**kwargs) # populates the post
+        #     self.fields['user'].queryset = User.objects.filter(groups = 'dosen')

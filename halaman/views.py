@@ -9,15 +9,16 @@ from django.contrib.auth.models import User
 from django.contrib.auth.models import Group
 from django.contrib.auth.forms import UserCreationForm
 
-from .decorators import unauthenticated_user
+from .decorators import unauthenticated_user, allowed_users
 
-from .models import Profil, Mahasiswa, Presensi, Pertemuan, Video, UploadCSV
-from .forms import PertemuanForm, ProfilForm, VideoForm
+from .models import *
+from .forms import *
+from .serializers import *
 
 from django.core.serializers import serialize
 from rest_framework import viewsets
 from rest_framework.decorators import api_view
-from .serializers import *
+
 
 # Create your views here.
 @unauthenticated_user
@@ -30,7 +31,7 @@ def masuk(request):
 
         if user is not None:
             login(request, user)
-            return redirect('dashboard')
+            return redirect('dashboardDosen')
         else:
             messages.warning(request, 'username atau password anda tidak cocok')
 
@@ -40,118 +41,225 @@ def keluar(request):
     logout(request)
     return redirect('masuk')
 
+def dashboardDosen(request):
+
+    log_user = request.user
+    matkul = Matkul.objects.filter( user_id = log_user )
+
+    if request.user.is_staff:
+        return redirect('Dashboard')
+
+    else:
+
+        context = {
+            'matkul' : matkul,
+        }
+        return render (request, 'dashboardDosen.html', context)
+
 @login_required(login_url='masuk')
-def daftar(request):
+@allowed_users(allowed_roles=['dosen'])
+def perkuliahan(request, idmatkul):
+
+    log_user = request.user
+    matkul = Matkul.objects.get(id = idmatkul)
+
+    nama_matkul = matkul.profil
+    pertemuan = Pertemuan.objects.filter(profil__nama = nama_matkul)
+    profil = Profil.objects.all()
+
+    jumlah = Pertemuan.objects.filter(profil__nama = nama_matkul).count
+
+    if request.method == "POST": 
+        if 'mulai_kuliah' in request.POST:   
+            data = request.POST
+            profil_id = matkul.profil.id
+            pertemuan = Pertemuan.objects.create(
+                profil_id = profil_id,
+                pengajar = log_user,
+                )
+
+    context = {
+        'nama_matkul' : nama_matkul,
+        "hal_dashboard" : "actives",
+        'profil' : profil, 
+        'jumlah' : jumlah,
+        'matkul' :matkul,
+    }
+        
+    return render (request, 'perkuliahan.html', context)
+
+@login_required(login_url='masuk')
+@allowed_users(allowed_roles=['dosen'])
+def rekap(request, idmatkul):
+    matkul = Matkul.objects.get(id = idmatkul)
+
+    nama_matkul = matkul.profil
+    pertemuan = Pertemuan.objects.filter(profil__nama = nama_matkul)
+
+    presensi = Presensi.objects.all()
+
+    jumlah_hadir = presensi.exclude(status="Absen").count()
+
+    context = {
+        "hal_rekap" : "actives", 'matkul' : matkul,
+        'presensi':presensi, 'pertemuan':pertemuan, 'jumlah_hadir':jumlah_hadir,
+    }
+    return render(request, 'rekap.html', context)
+
+@login_required(login_url='masuk')
+@allowed_users(allowed_roles=['dosen'])
+def detailRekap(request, idmatkul, pk):
+    matkul = Matkul.objects.get(id = idmatkul)
+    pertemuan = Pertemuan.objects.get(id = pk)
+    presensi = Presensi.objects.filter(pertemuan_id = pk)
+    
+    hadir = presensi.exclude(status = "0")
+    absen = presensi.filter(status = "0")
+
+    context = {
+        'pertemuan':pertemuan, 'presensi':presensi,
+        'hadir':hadir, 'absen':absen, 'matkul':matkul,
+    }
+    return render(request, 'detailRekap.html', context)
+
+#akademik
+@login_required(login_url='masuk')
+@allowed_users(allowed_roles=['akademik'])
+def dashboardAkademik(request):
+    grup = Group.objects.get(name='dosen')
+    grupDosen = User.objects.filter(groups = grup)
+    
+    matkul = Matkul.objects.filter(user__in = grupDosen)
+    profil = Profil.objects.all()
+    
+    context = {
+        'matkul' : matkul , 'profil' : profil, 'dosen': grupDosen, 
+        "hal_dashboard_aka" : "actives",
+    }
+    return render (request, 'dashboardAkademik.html', context)
+
+@login_required(login_url='masuk')
+@allowed_users(allowed_roles=['akademik'])
+def tambahPengajar(request):
+    grup = Group.objects.get(name='akademik')
+
+    akun = User.objects.exclude(groups = grup)
+    profil = Profil.objects.all()
+
+    if request.method == 'POST':
+    #     pengampuMatkul = MatkulForm (request.POST)
+    #     if pengampuMatkul.is_valid():
+    #         pengampuMatkul.save()
+    #         return redirect('Dashboard')
+        data = request.POST
+        # akun = int()
+        matkul = Matkul.objects.create(
+            user_id = data['akun_dosen'],
+            profil_id = data['matakuliah']
+            )
+        matkul.save()
+        return redirect('Dashboard')
+        # pengampuMatkul = MatkulForm ()
+    context = {
+        'akun':akun, 'profil':profil, 
+        # 'pengampuMatkul':pengampuMatkul
+    }
+    return render (request, 'tambahPengajar.html', context)
+
+def detailDosen(request, pk):
+    akun = User.objects.get(id=pk)
+    matkul = Matkul.objects.filter( user=akun )
+
+    context={
+        'akun':akun, 'matkul':matkul,
+    }
+    return render(request, 'detailDosen.html', context)
+
+@login_required(login_url='masuk')
+@allowed_users(allowed_roles=['akademik'])
+def detailMatkul(request, pk):
+    profil = Profil.objects.get(id=pk)
+    matkul = Matkul.objects.filter(profil = profil)
+    pertemuan = profil.pertemuan.all()
+    jumlah = pertemuan.count()
+    terakhir = pertemuan.last()
+    pengajar = Pertemuan.objects.filter(pengajar = profilnama)
+
+    context = {
+        'profil':profil, 'pertemuan':pertemuan, 'jumlah':jumlah,
+        'terakhir':terakhir, 'matkul':matkul, 'pengajar':pengajar,
+    }
+    return render(request, 'detailMatkul.html', context)
+
+@login_required(login_url='masuk')
+@allowed_users(allowed_roles=['akademik'])
+def hapus_akun(request, pk):
+    if request.method == "POST":
+        profil = Profil.objects.get(id = pk)
+        profil.delete()
+    return redirect('Dashboard')
+
+@login_required(login_url='masuk')
+@allowed_users(allowed_roles=['akademik'])
+def tambahDosen(request):
     form = UserCreationForm()
 
     if request.method == 'POST':
         form = UserCreationForm(request.POST)
-        if form.is_valid():
-            user = form.save()
-            # nama = form.cleaned_data.get('username')
-            # messages.success(request, f'Akun { nama } berhasil dibuat')
-            group = Group.objects.get(name='dosen')
-            user.groups.add(group)
+        data = request.POST
+        user = User.objects.create_user(
+            username = data['username'],
+            password = data['password1']
+        )
+        user.first_name = data['nama_awal']
+        user.last_name = data['nama_akhir']
+        user.save() 
 
-            form = UserCreationForm()
-            return redirect('dataAkun')
-    else:
-        form = UserCreationForm()
+        group = Group.objects.get(name='dosen')
+        user.groups.add(group)
+
+        # if form.is_valid():
+        #     user = form.save()
+        #     # nama = form.cleaned_data.get('username')
+        #     # messages.success(request, f'Akun { nama } berhasil dibuat')
+        #     group = Group.objects.get(name='dosen')
+        #     user.groups.add(group)
+
+        #     form = UserCreationForm()
+        return redirect('Dashboard')
+    # else:
+    #     form = UserCreationForm()
 
     context={
-        "hal_daftar" : "active",
+        "hal_daftar" : "actives",
         'form' : form,
     }
-    return render(request, 'register.html', context)
+    return render(request, 'tambahDosen.html', context)
 
 @login_required(login_url='masuk')
-def dataAkun(request):
-    last_user = User.objects.all().last()
+@allowed_users(allowed_roles=['akademik'])
+def tambahMatkul(request):
 
     if request.method == 'POST':
         data = request.POST
-        last_id = last_user.pk
         profil = Profil.objects.create(
-            user_id = last_id,
             kode = data['kode'],
             nama = data['matkul'],
             ruang = data['ruang'],
+            hari = data['hari'],
             jadwal = data['jadwal'])
 
         profil.save()
-        return redirect('dashboard')
+        return redirect('Dashboard')
         
     context={
-        'last_user' : last_user,
     }
-    return render(request, 'data_akun.html', context)
+    return render(request, 'tambahMatkul.html', context)
 
 @login_required(login_url='masuk')
-def dashboard(request):
-    # ALTER TABLE halaman_pertemuan AUTO_INCREMENT=1;
-    log_user = request.user
-    nama_matkul = request.user.profil
-    pertemuan = Pertemuan.objects.filter(matkul__nama=nama_matkul)
-
-    profil = Profil.objects.all()
-
-    log_user = request.user
-    nama_matkul = request.user.profil
-    jumlah = Pertemuan.objects.filter(matkul__nama=nama_matkul).count
-
-    if request.user.is_superuser:
-        return redirect('Dashboard')
-
-    else:
-        if request.method == "POST": 
-            if 'mulai_kuliah' in request.POST:   
-                data = request.POST
-                matkul_id = request.user.profil.id
-                pertemuan = Pertemuan.objects.create(matkul_id=matkul_id)
-                # if pertemuan:
-                #     return redirect('/halaman/dashboard/')
-                # else:
-                #     return HttpResponse("Pertemuan tidak terselenggara")
-
-        context = {
-            'nama_matkul' : nama_matkul,
-            "hal_dashboard" : "active",
-            'profil' : profil, 
-            'jumlah' : jumlah,
-        }
-        
-        return render (request, 'dashboard.html', context)
-    
-def dashboard_akademik(request):
-    profil = User.objects.exclude(groups = 1)
-
-    context = {
-        'profil' : profil , 'user'
-        'hal_dashboard_aka': "active",
-    }
-    return render (request, 'list_dosen.html', context)
-
-def hapus_akun(request, pk):
-    if request.method == "POST":
-        akun = User.objects.get(id = pk)
-        akun.delete()
-    return redirect('Dashboard')
-
-@login_required(login_url='masuk')
-def aktivitas(request):
-    pertemuan = Pertemuan.objects.last()
-
-    context = {
-        
-   }
-    return render (request, 'aktivitas.html', context)
-
-@login_required(login_url='masuk')
+@allowed_users(allowed_roles=['akademik'])
 def daftarMahasiswa(request):
 
-    log_user = request.user
-    nama_matkul = request.user.profil
-    presensi = Presensi.objects.filter(pertemuan__matkul=nama_matkul)
     mahasiswa = Mahasiswa.objects.all()
     
     if request.method == "POST":
@@ -166,124 +274,134 @@ def daftarMahasiswa(request):
             next(io_string)
             for column in csv.reader(io_string, delimiter=",", quotechar="|"):
                 _, created = Mahasiswa.objects.get_or_create(
-                    niu = column[1], 
-                    nim = column[2],
-                    nama = column[3],
-                    program_studi = column[4],
-                    angkatan = column[5],
+                    niu = column[0], 
+                    nim = column[1],
+                    nama = column[2],
+                    program_studi = column[3],
+                    angkatan = column[4],
                 )
 
     context = {
-      "hal_daftarMahasiswa" : "active",
-      'presensi': presensi, 'mahasiswa':mahasiswa,
+      "hal_daftarMahasiswa" : "actives", 'mahasiswa':mahasiswa,
 
    }
     return render(request, 'mahasiswa.html', context)
 
 @login_required(login_url='masuk')
-def detail(request, pk):
+@allowed_users(allowed_roles=['akademik'])
+def detailMahasiswa(request, pk):
 
-    log_user = request.user
-    nama_matkul = request.user.profil
-    list_pertemuan = Pertemuan.objects.filter(matkul=nama_matkul)
+    profil = Profil.objects.all()
+    list_pertemuan = Pertemuan.objects.filter(profil__in =profil)
     kehadiran = Presensi.objects.filter(pertemuan__in=list_pertemuan)
 
     mahasiswa = Mahasiswa.objects.get(niu=pk)
-    presensi = mahasiswa.presensi_set.all()
-    # jumlah_hadir = presensi.filter(status="1").count()
-    # jumlah_absen = presensi.filter(status="0").count()
-    # total_kehadiran = presensi.exclude(status="0").count()
+    listPresensi = mahasiswa.presensi_set.all()
+
+    selectedId = mahasiswa.presensi_set.values_list('pertemuan__profil', flat=True).distinct()
+    matkul = Profil.objects.filter(id__in = selectedId)
+    presensi = Presensi.objects.filter(mahasiswa = pk)
 
     context = {
-        'mahasiswa':mahasiswa, 'presensi':presensi,
-        # 'jumlah_hadir' :jumlah_hadir,
-        # 'jumlah_absen':jumlah_absen, 'total_kehadiran':total_kehadiran,
+        'mahasiswa':mahasiswa, 'presensi':presensi, 'matkul':matkul,
+
     }
-    return render(request, 'detail.html', context)
+    return render(request, 'detailMahasiswa.html', context)
 
 @login_required(login_url='masuk')
-def rekap(request):
-    log_user = request.user
-    nama_matkul = request.user.profil
-    pertemuan = Pertemuan.objects.filter(matkul__nama=nama_matkul)
+@allowed_users(allowed_roles=['akademik'])
+def detailPerkuliahan(request, niu, pk):
+    mahasiswa = Mahasiswa.objects.get(niu=niu)
 
-    presensi = Presensi.objects.all()
+    profil = Profil.objects.get(id = pk)
 
-    jumlah_hadir = presensi.exclude(status="Absen").count()
+    presensi = Presensi.objects.filter(pertemuan__profil__id = pk).filter(mahasiswa = niu)
+    jumlah = presensi.count()
+    kehadiran = presensi.filter(status = 1).count()
+    terakhir = presensi.filter(status = 1).last()
+    batas = jumlah * 0.75
 
-    context = {
-        "hal_rekap" : "active",
-        'presensi':presensi, 'pertemuan':pertemuan, 'jumlah_hadir':jumlah_hadir,
+    context ={
+        'mahasiswa':mahasiswa, 'profil':profil, 'presensi':presensi,
+        'kehadiran':kehadiran, 'jumlah':jumlah, 'terakhir':terakhir, 'batas':batas,
     }
-    return render(request, 'rekap.html', context)
+    return render(request, 'detailPerkuliahan.html', context)
 
 @login_required(login_url='masuk')
-def rekapDetail(request, pk):
-    pertemuan = Pertemuan.objects.get(id=pk)
-    presensi = Presensi.objects.filter(pertemuan_id = pk)
-    
-
-    hadir = presensi.exclude(status="0")
-    absen = presensi.filter(status="0")
-
-    context = {
-        'pertemuan':pertemuan, 'presensi':presensi,
-        'hadir':hadir, 'absen':absen,
-    }
-    return render(request, 'rekapDetail.html', context)
-    
-def video(request):
+@allowed_users(allowed_roles=['akademik'])
+def faceDetection(request):
 
     videos = Video.objects.all()
-    hapus = UploadCSV.objects.all().delete()
-
 
     if request.method == "POST":
         form = VideoForm (request.POST, request.FILES)
         if form.is_valid():
             form.save()
-            return redirect('script')
+            return redirect('upload')
     else:
         form = VideoForm()
     
     context={
         'form':form, 
         'videos':videos, 
-        'hal_upload' : 'active'
+        'hal_upload' : 'actives'
     }
     return render(request, 'video.html', context)
 
+@login_required(login_url='masuk')
+@allowed_users(allowed_roles=['akademik'])
 def uploadKehadiran(request):
     hapus = UploadCSV.objects.all().delete()
-
+    kehadiran = FileKehadiran.objects.all()
     if request.method == "POST":
-        csv_file = request.FILES.get("file", None)
+        if 'fileKehadiran' in request.POST:
+            fileKehadiran = KehadiranForm (request.POST, request.FILES)
+            if fileKehadiran.is_valid():
+                fileKehadiran.save()
+            return redirect('script')
 
-        if not csv_file.name.endswith(".csv"):
-            messages.error(request, 'File yang dimasukkan bukan csv')
-        
-        data_set = csv_file.read().decode('UTF-8')
-        io_string = io.StringIO(data_set)
-        next(io_string)
-        for column in csv.reader(io_string, delimiter=",", quotechar="|"):
-            _, created = UploadCSV.objects.get_or_create(
-                nomor = column[0],
-                nama = column[1],
-                nim = column[2],
-                attendance = column[3]
-            )
-        return redirect('presensi')
+    else:
+        fileKehadiran = KehadiranForm ()
     context ={
-        'hapus' : hapus,
+        'hapus' : hapus, 'fileKehadiran' : fileKehadiran, 
     }
     return render(request, 'upload.html', context)
 
-# def kenzy(request):
-    # return render(request, 'kenzy.html')
+@login_required(login_url='masuk')
+@allowed_users(allowed_roles=['akademik'])
+def presensi(request):
+    pertemuan = Pertemuan.objects.all()
+    tersedia = pertemuan.filter(simpan = 0).count() 
+    
+    hapus = UploadCSV.objects.all().delete()
 
-def faceDetection(request):
-    #masukkan kode kenzy
-    #komen
+    if request.method == "POST":
+        if "simpan" in request.POST:
+            return redirect('daftarMahasiswa')
+        if "kehadiran" in request.POST:
+            csv_file = request.FILES.get("file", None)
+
+            if not csv_file.name.endswith(".csv"):
+                messages.error(request, 'File yang dimasukkan bukan csv')
+            
+            data_set = csv_file.read().decode('UTF-8')
+            io_string = io.StringIO(data_set)
+            next(io_string)
+            for column in csv.reader(io_string, delimiter=",", quotechar="|"):
+                _, created = UploadCSV.objects.get_or_create(
+                    nomor = column[0],
+                    nama = column[1],
+                    nim = column[2],
+                    attendance = column[3]
+                )
+    context={
+        'hal_presensi' : 'actives', 'tersedia':tersedia, 'hapus':hapus,
+    }
+    return  render(request, 'presensi.html', context  )
+
+@login_required(login_url='masuk') 
+@allowed_users(allowed_roles=['akademik'])
+def script(request): 
     import numpy as np
     import pandas as pd
     import os
@@ -294,23 +412,14 @@ def faceDetection(request):
     from time import sleep
     from openpyxl.reader.excel import load_workbook
 
-
-    #filename = '../data/Attendance_xlsx/third_year_5sem_IT2.xlsx'
-
     fname = 'halaman/video/2020-06-02/trainingData.yml'
     if not os.path.isfile(fname):
         print('first train the data')
         exit(0)
 
-
     names = {}
     labels = []
     students = []
-
-
-    # def from_excel_to_csv():
-    #     df = pd.read_excel(filename,index=False)
-    #     df.to_csv('../data.csv')
 
     def getdata():
         with open('halaman/video/2020-06-02/data.csv','r') as f:
@@ -320,14 +429,10 @@ def faceDetection(request):
             for line in lines:
                 names[int(line[0])] = line[1] 
 
-
     def  markPresent(name):
         with open('halaman/video/2020-06-02/data.csv','r') as f:
             data = csv.reader(f)
             lines = list(data)
-            # for line in lines:
-            #     line.pop(0)
-            # print(lines)
             for line in lines:
                 if line[1] == name:
                     line[-1] = '1'
@@ -335,11 +440,6 @@ def faceDetection(request):
                         writer = csv.writer(g,lineterminator='\n')
                         writer.writerows(lines)
                         break
-
-
-        
-        # df = pd.read_csv('data.csv')
-        # df.to_excel('data.xlsx',index=False)
 
     def update_Excel():
         with open('halaman/video/2020-06-02/data_upload.csv') as f:
@@ -352,7 +452,6 @@ def faceDetection(request):
                 writer.writerows(lines)
                 
         df = pd.read_csv('halaman/video/2020-06-02/data_upload.csv')
-        #df.to_excel('../data.xlsx',index = False)
 
     def csv_to_json():
         csvfile = open('halaman/video/2020-06-02/data_upload.csv', 'r')
@@ -371,42 +470,9 @@ def faceDetection(request):
         with open('halaman/video/2020-06-02/data.json', 'w') as outfile:
             json.dump(my_list, outfile, indent= 4)
         
-    # def insertdate():
-    #     flag=0
-    #     for i in D.filterdates():
-    #         if str(i.day) == str(datetime.datetime.today().day) and str(i.month) == str(datetime.datetime.today().month) and str(i.year) == str(datetime.datetime.today().year):
-    #             flag=1
-    #     if flag==1:
-    #         wb = load_workbook('../data/Attendance_xlsx/third_year_5sem_IT2.xlsx')
-    #         print('Date:',str(i)[:11],' is written in excel and is a working day')
-    #         sheet = wb.active
-    #         current_row = sheet.max_row 
-    #         current_column = sheet.max_column
-    #         print(current_column)
-    #         sheet.column_dimensions['A'].width = 20
-    #         sheet.column_dimensions['B'].width = 20
-    #         sheet.cell(row=1, column=1).value = "Name"
-    #         sheet.cell(row=1, column=2).value = "Enrollment"
-
-
-    #         current_row = sheet.max_row
-    #         current_column = sheet.max_column
-    #         #sheet.cell(row=1,column=current_column).width = 20
-    #         sheet.cell(row=1, column=current_column+1).value = "".join(str(datetime.datetime.today())[:11])
-            
-    #         # save the file 
-    #         wb.save('../data/Attendance_xlsx/third_year_5sem_IT2.xlsx') 
-        
-    #     else:
-    #         print("this is a holiday popup..ask if they want to continue..")
-
-
-
+    url = 'halaman/video/test6.mp4'
     face_cascade = cv2.CascadeClassifier('halaman/video/haarcascade/haarcascade_frontalface_default.xml')
-    cap = cv2.VideoCapture('halaman/video/test6.mp4')
-
-    # cap.set(3,640) # set Width
-    # cap.set(4,480) # set Height
+    cap = cv2.VideoCapture(url) #ini harusnya bisa dibuat dinamis
 
     #from_excel_to_csv() # converting the excel to csv for use
     getdata() # getting the data from csv in a dictionary
@@ -416,17 +482,13 @@ def faceDetection(request):
 
     recognizer.read(fname) # read the trained yml file
     
-
     num=0
     while True:   
         ret, img = cap.read()
         num+=1
         if num == cap.get(cv2.CAP_PROP_FRAME_COUNT):
             break
-            # return redirect('dashboard')
-        #img = cv2.flip(img, -1)
-        #img = cv2.rotate(img, rotateCode=cv2.ROTATE_90_CLOCKWISE)
-        #img = cv2.rotate(img, rotateCode=cv2.ROTATE_90_COUNTERCLOCKWISE)
+
         gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
         equ = cv2.equalizeHist(gray) 
         final = cv2.medianBlur(equ, 3)
@@ -471,24 +533,8 @@ def faceDetection(request):
                 
     # cv2.destroyAllWindows()
 
-    # return redirect('dashboard')
-
     pass
-
     return redirect ('upload')
-
-def presensi(request):
-    pertemuan = Pertemuan.objects.all()
-    tersedia = pertemuan.filter(simpan = 0).count() 
-
-    if request.method == "POST":
-        if "simpan" in request.POST:
-            return redirect('daftarMahasiswa')
-            
-    context={
-        'hal_presensi' : 'active', 'tersedia':tersedia,
-    }
-    return  render(request, 'presensi.html', context  )
 
 
 
@@ -501,12 +547,16 @@ class ProfilViewSet(viewsets.ModelViewSet):
     queryset = Profil.objects.all().order_by('id')
     serializer_class = ProfilSerializer
 
+class MatkulViewSet(viewsets.ModelViewSet):
+    queryset = Matkul.objects.all().order_by('id')
+    serializer_class = MatkulSerializer
+
 class MahasiswaViewSet(viewsets.ModelViewSet):
     queryset = Mahasiswa.objects.all().order_by('niu')
     serializer_class = MahasiswaSerializer
 
 class PertemuanViewSet(viewsets.ModelViewSet):
-    queryset = Pertemuan.objects.all().order_by('matkul')
+    queryset = Pertemuan.objects.all().order_by('profil')
     serializer_class = PertemuanSerializer
 
 class PresensiViewSet(viewsets.ModelViewSet):
@@ -516,6 +566,10 @@ class PresensiViewSet(viewsets.ModelViewSet):
 class VideoViewSet(viewsets.ModelViewSet):
     queryset = Video.objects.all().order_by('timestamp')
     serializer_class = VideoSerializer
+
+class FileKehadiranViewSet(viewsets.ModelViewSet):
+    queryset = FileKehadiran.objects.all().order_by('timestamp')
+    serializer_class = FileKehadiranSerializer
 
 class UploadCSVViewSet(viewsets.ModelViewSet):
     queryset = UploadCSV.objects.all()

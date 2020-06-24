@@ -9,3 +9,6 @@ admin.site.register(Pertemuan)
 admin.site.register(Presensi)
 admin.site.register(Video)
 admin.site.register(UploadCSV)
+admin.site.register(Matkul)
+
+admin.site.register(FileKehadiran)

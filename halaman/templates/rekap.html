@@ -11,42 +11,32 @@
 {% block content %}
 <div class="card">
     <div class="card-body scrollable">
-        <br><h4>Pertemuan Kuliah {{user.profil.nama}}</h4> <br>
+        <h4>Pertemuan Kuliah {{user.profil.nama}}</h4> <br>
+        <div class="grid-wrapper">
         {% for pertemuan in pertemuan %}
-            <div class="center pertemuan-container col-md-8">
-                <div class="row mx-1 my-2">
-                    <table class="table" style="margin: 0">
-                        <tr>
-                            <td class="count col-1 h2 px-2 nomor"
-                            style="vertical-align: center; border: none;">
-                            </td>
-                            <td class="col-md-6 waktu"
-                            style="vertical-align: center; border: none;">
-                                <h5 style="margin: .5rem 1rem">{{pertemuan.waktu_perkuliahan}}</h5>
-                            </td>
-                            <td class="col-2 my-auto"
-                            style="vertical-align: center ; border: none;">
-                                <a href="{% url 'rekapDetail' pertemuan.id %}" class="btn btn-outline-info"
-                                style="float: right;">Detail</a>
-                            </td>
-                        </tr>
-                    </table>
+
+            
+                <div class="grid-item">
+                    <div style="margin: 2vh 4vh;">
+                        <h5> <span class="count">dummy</span></h5>
+                        <h6>{{pertemuan.pengajar}} - {{pertemuan.tanggal_perkuliahan}} | {{pertemuan.waktu_perkuliahan}}</h6>
+                    </div>
+                    <div style="margin-left:auto; border-radius:10px;">
+                        <a href="{% url 'detailRekap' matkul.id pertemuan.id %}" class=" h-100 btn btn-info"
+                        style="width:25vh; padding-top:4.5vh"> <h5>Detail</h5></a> 
+                    </div>
                 </div>
-            </div>
+            
         {% endfor %}
+        </div>
     </div>
 </div>
 {% endblock content %}
 {% block script %}
-    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
-
-    <script>
-        var list = document.getElementsByClassName("count");
-        for (var i = 1  ; i <= list.length; i++) {
-            list[i-1].innerHTML = i;
-        }
-
-    </script>
+<script>
+    var list = document.getElementsByClassName("count");
+    for (var i = 1  ; i <= list.length; i++) {
+        list[i-1].innerHTML = 'Rekap Pertemuan ke - ' + i;
+    }
+</script>
 {% endblock script%}

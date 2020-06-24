@@ -1,0 +1,48 @@
+{% extends 'base.html' %}
+
+{% block header %}
+    Masukkan Data Akun Dosen 
+{% endblock header %}
+
+{% block kembali %} 
+    <a href="{% url 'Dashboard' %}" 
+    class="kembali"> < Kembali </a>
+{% endblock kembali %}
+
+{% block sidebar %}
+    {% include 'adds/sidebar-superadmin.html' %}
+{% endblock sidebar %}
+
+{% load crispy_forms_tags %}
+
+{% block content %}
+<div class="card">
+    <div class="card-body"> <br>
+    <h4></h4>
+        <br>
+        <div class="col-12 d-flex justify-content-center">
+
+            <form method="POST" action="" class="col-6">
+                {% csrf_token %}
+                {% comment %} {{ form|crispy }} {% endcomment %}
+
+                <input type="text" name="username" placeholder="Username akun. . ." class="form-control" required>
+                <br>
+                <input type="password" name="password1" placeholder="Password akun. . ." class="form-control" required>
+                <br>
+                <input type="password" name="password2" placeholder="Konfirmasi password. . ." class="form-control" required>
+                <br>
+                <input type="text" name="nama_awal" placeholder="Nama awal dosen. . ." class="form-control" required>
+                <br>
+                <input type="text" name="nama_akhir" placeholder="Nama akhir dosen. . ." class="form-control" required>
+                <br>
+
+                <button type="submit" class="btn btn-primary btn-block">Buat Akun Dosen</button>
+            </form>
+        </div>
+    </div>
+        
+        
+    </div>
+</div>
+{% endblock content %}

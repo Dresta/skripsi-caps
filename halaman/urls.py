@@ -3,19 +3,23 @@ from . import views
 
 
 urlpatterns = [
-    path('registrasi/', views.daftar, name='daftar'),
-    path('dataAkun/', views.dataAkun, name='dataAkun'),
-    path('dashboard/', views.dashboard , name='dashboard'),
-    path('aktivitas/', views.aktivitas, name='aktivitas'),
-    path('mahasiswa/', views.daftarMahasiswa, name='daftarMahasiswa'),
-    path('detail/<str:pk>', views.detail, name='detail'),
-    path('rekap/', views.rekap, name='rekap'),
-    path('rekapDetail/<str:pk>', views.rekapDetail, name='rekapDetail'),
-    path('dashboard_akademik', views.dashboard_akademik, name='Dashboard'),
-    path('delete/id_akun/<str:pk>', views.hapus_akun, name='hapus_akun'),
-    path('video/', views.video, name='video'),
-    path('upload/', views.uploadKehadiran, name='upload'),
-    path('presensi/', views.presensi, name='presensi'),
-    # path('kenzy/', views.kenzy, name='kenzy'),
-    path('FaceDetection/', views.faceDetection, name='script')
+    path('dosen/', views.dashboardDosen, name="dashboardDosen"),
+    path('dosen/perkuliahan/<str:idmatkul>', views.perkuliahan , name='perkuliahan'),
+    path('dosen/rekap/<str:idmatkul>', views.rekap, name='rekap'),
+    path('dosen/rekap/<str:idmatkul>/<str:pk>', views.detailRekap, name='detailRekap'),
+    
+    path('akademik/', views.dashboardAkademik, name='Dashboard'),
+    path('akademik/registrasi/akun/', views.tambahDosen, name='tambahDosen'),
+    path('akademik/registrasi/Matkul/', views.tambahMatkul, name='tambahMatkul'),
+    path('akademik/registrasi/pengajar/', views.tambahPengajar, name='tambahPengajar'),
+    path('akademik/Dosen/<str:pk>', views.detailDosen, name='detailDosen'),
+    path('akademik/matakuliah/<str:pk>', views.detailMatkul, name='detailMatkul'),
+    path('akademik/matakuliah/delete/<str:pk>', views.hapus_akun, name='hapus_akun'),
+    path('akademik/mahasiswa/', views.daftarMahasiswa, name='daftarMahasiswa'),
+    path('akademik/mahasiswa/<str:pk>', views.detailMahasiswa, name='detail'),
+    path('akademik/mahasiswa/<str:niu>/<str:pk>', views.detailPerkuliahan, name='detailPerkuliahan'),
+    path('akademik/presensi/', views.presensi, name='presensi'),
+    path('akademik/FaceDetection/', views.script, name='script'),
+    path('akademik/video/', views.faceDetection, name='video'),
+    path('akademik/upload/', views.uploadKehadiran, name='upload'),
 ] 
