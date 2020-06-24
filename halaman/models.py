@@ -6,9 +6,17 @@ from django.contrib.auth.models import User
 
 # Create your models here.
 class Profil(models.Model):
+    HARI=(
+        ('Senin', 'Senin'),
+        ('Selasa', 'Selasa'),
+        ('Rabu', 'Rabu'),
+        ('Kamis', 'Kamis'),
+        ('Jumat', 'Jumat'),
+    )
     kode = models.CharField(max_length=100)
     nama = models.CharField(max_length=100)
     ruang = models.CharField(max_length=6)
+    hari = models.CharField(choices=HARI, max_length=100)
     jadwal = models.TimeField()
 
     def __str__(self):

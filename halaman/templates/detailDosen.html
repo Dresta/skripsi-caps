@@ -1,0 +1,70 @@
+{% extends 'base.html' %}
+
+{% block kembali %} 
+    <a href="{% url 'Dashboard' %}" 
+    class="kembali"> < Kembali </a>
+{% endblock kembali %}
+
+{% block header %}
+    Detail Mata Kuliah
+{% endblock header %}
+
+{% block sidebar %}
+    {% include 'adds/sidebar-superadmin.html' %}
+{% endblock sidebar %}
+
+{% block content %}
+    <div class="card">
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-12"> 
+                    <table class="table">
+                        <thead class="thead-dark">
+                            <tr>
+                                <th>Data Dosen</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tr>
+                            <td>Username</td>
+                            <td>: {{akun.username}}</td>
+                        </tr>
+                        <tr>
+                            <td>Nama Dosen</td>
+                            <td>: {{akun.get_full_name}}</td>
+                        </tr>
+                    </table>    
+                </div>
+            </div>
+            <br>
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="scrollable-md">
+                        <table class="table fixed-dosen">
+                            <thead class="thead-dark">
+                                <tr>
+                                    <th>Nama Mata Kuliah</th>
+                                    <th>Waktu Pelaksanaan</th>
+                                    <th>Ruang Kelas</th>
+                                </tr>
+                            </thead>
+
+                            <tbody>
+                            {% for matkul in matkul %}
+                                <tr>
+                                    <td>{{matkul.profil.nama}}</td>
+                                    <td> {{matkul.profil.hari}} - {{matkul.profil.jadwal}}</td>
+                                    <td>{{matkul.profil.ruang}}</td>
+                                </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock content %}
+
+{% block script %}
+{% endblock script%}

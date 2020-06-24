@@ -3,16 +3,17 @@ from . import views
 
 
 urlpatterns = [
-    path('dosen/', views.dosen, name="dosen"),
-    path('dosen/dashboard/<str:idmatkul>', views.dashboard , name='dashboard'),
+    path('dosen/', views.dashboardDosen, name="dashboardDosen"),
+    path('dosen/perkuliahan/<str:idmatkul>', views.perkuliahan , name='perkuliahan'),
     path('dosen/rekap/<str:idmatkul>', views.rekap, name='rekap'),
     path('dosen/rekap/<str:idmatkul>/<str:pk>', views.detailRekap, name='detailRekap'),
     
-    path('akademik/', views.dashboard_akademik, name='Dashboard'),
-    path('akademik/registrasi/akun/', views.daftar, name='daftar'),
-    path('akademik/registrasi/profil/', views.dataAkun, name='dataAkun'),
+    path('akademik/', views.dashboardAkademik, name='Dashboard'),
+    path('akademik/registrasi/akun/', views.tambahDosen, name='tambahDosen'),
+    path('akademik/registrasi/Matkul/', views.tambahMatkul, name='tambahMatkul'),
     path('akademik/registrasi/pengajar/', views.tambahPengajar, name='tambahPengajar'),
-    path('akademik/matakuliah/<str:pk>', views.detailAkun, name='detailAkun'),
+    path('akademik/Dosen/<str:pk>', views.detailDosen, name='detailDosen'),
+    path('akademik/matakuliah/<str:pk>', views.detailMatkul, name='detailMatkul'),
     path('akademik/matakuliah/delete/<str:pk>', views.hapus_akun, name='hapus_akun'),
     path('akademik/mahasiswa/', views.daftarMahasiswa, name='daftarMahasiswa'),
     path('akademik/mahasiswa/<str:pk>', views.detailMahasiswa, name='detail'),

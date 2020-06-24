@@ -29,11 +29,11 @@ body{
 .sidenav a:hover {
     color: #f1f1f1;
 }
-.active{
+.actives{
     background-color: rgb(0,120,240);
     color: white;
 }
-.active a{
+.actives a{
     color: whitesmoke;
 }
 .navbar{
@@ -205,6 +205,30 @@ iframe{
 
 
 .fixed th, .fixed td {
+  padding: 10px;
+  text-align: left;
+  width: 60vh;
+}
+/*tabel dosen*/
+.fixed-dosen{
+    width: 100%;
+    table-layout: fixed;
+    border-collapse: collapse;
+}
+
+.fixed-dosen tbody{
+  display:block;
+  width: 100%;
+  overflow: auto;
+  height: 100vh;
+}
+
+.fixed-dosen thead tr {
+   display: block;
+}
+
+
+.fixed-dosen th, .fixed-dosen td {
   padding: 10px;
   text-align: left;
   width: 60vh;

@@ -16,7 +16,7 @@
     <div class="card-body"> <br>
     {% if tersedia > 0 %}
         <button type="button" class="btn btn-success open" style="float:right"
-        data-toggle="modal" data-target="#myModal"> Upload Kehadiran </button>
+        data-toggle="modal" data-target="#myModal" onclick='hapus()'> Upload Kehadiran </button>
 
         
         <!-- Modal -->
@@ -35,7 +35,7 @@
                             <center>
                                 <strong> | Nomor | Nama | NIU | Attendance | </strong></label> <br> <br>
                             </center>
-                            <input type="file" name="file" class="btn-block"> <br> <br>
+                            <input type="file" name="file" class="btn-block" required> <br> <br>
                             <button type="sumbit" name="kehadiran" class="btn btn-success btn-block" > 
                             Upload Data Kehadrian Mahasiswa</button>
                         </form>
@@ -49,6 +49,7 @@
             <div><br>
                 <h6><strong> Pilih Pertemuan: </strong> </h6>
                 <select name="Pilihan" id="pertemuan" class=" form-control" style="margin-top: 1vh">
+                    <option value="">---Pilih Pertemuan---</option>
                 </select> 
             </div> <br>
             <div class="scrollable-md">
@@ -78,6 +79,7 @@
 <script src= "https://cdnjs.cloudflare.com/ajax/libs/axios/0.19.2/axios.min.js"></script>
 
 <script>
+
 $(document).ready(function(){
     {{hapus}}
 });

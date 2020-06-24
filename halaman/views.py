@@ -31,7 +31,7 @@ def masuk(request):
 
         if user is not None:
             login(request, user)
-            return redirect('dosen')
+            return redirect('dashboardDosen')
         else:
             messages.warning(request, 'username atau password anda tidak cocok')
 
@@ -41,7 +41,7 @@ def keluar(request):
     logout(request)
     return redirect('masuk')
 
-def dosen(request):
+def dashboardDosen(request):
 
     log_user = request.user
     matkul = Matkul.objects.filter( user_id = log_user )
@@ -54,11 +54,11 @@ def dosen(request):
         context = {
             'matkul' : matkul,
         }
-        return render (request, 'dosen.html', context)
+        return render (request, 'dashboardDosen.html', context)
 
 @login_required(login_url='masuk')
 @allowed_users(allowed_roles=['dosen'])
-def dashboard(request, idmatkul):
+def perkuliahan(request, idmatkul):
 
     log_user = request.user
     matkul = Matkul.objects.get(id = idmatkul)
@@ -80,13 +80,13 @@ def dashboard(request, idmatkul):
 
     context = {
         'nama_matkul' : nama_matkul,
-        "hal_dashboard" : "active",
+        "hal_dashboard" : "actives",
         'profil' : profil, 
         'jumlah' : jumlah,
         'matkul' :matkul,
     }
         
-    return render (request, 'dashboard.html', context)
+    return render (request, 'perkuliahan.html', context)
 
 @login_required(login_url='masuk')
 @allowed_users(allowed_roles=['dosen'])
@@ -101,7 +101,7 @@ def rekap(request, idmatkul):
     jumlah_hadir = presensi.exclude(status="Absen").count()
 
     context = {
-        "hal_rekap" : "active", 'matkul' : matkul,
+        "hal_rekap" : "actives", 'matkul' : matkul,
         'presensi':presensi, 'pertemuan':pertemuan, 'jumlah_hadir':jumlah_hadir,
     }
     return render(request, 'rekap.html', context)
@@ -125,7 +125,7 @@ def detailRekap(request, idmatkul, pk):
 #akademik
 @login_required(login_url='masuk')
 @allowed_users(allowed_roles=['akademik'])
-def dashboard_akademik(request):
+def dashboardAkademik(request):
     grup = Group.objects.get(name='dosen')
     grupDosen = User.objects.filter(groups = grup)
     
@@ -133,8 +133,8 @@ def dashboard_akademik(request):
     profil = Profil.objects.all()
     
     context = {
-        'matkul' : matkul , 'profil' : profil,
-        "hal_dashboard_aka" : "active",
+        'matkul' : matkul , 'profil' : profil, 'dosen': grupDosen, 
+        "hal_dashboard_aka" : "actives",
     }
     return render (request, 'dashboardAkademik.html', context)
 
@@ -166,20 +166,30 @@ def tambahPengajar(request):
     }
     return render (request, 'tambahPengajar.html', context)
 
+def detailDosen(request, pk):
+    akun = User.objects.get(id=pk)
+    matkul = Matkul.objects.filter( user=akun )
+
+    context={
+        'akun':akun, 'matkul':matkul,
+    }
+    return render(request, 'detailDosen.html', context)
+
 @login_required(login_url='masuk')
 @allowed_users(allowed_roles=['akademik'])
-def detailAkun(request, pk):
+def detailMatkul(request, pk):
     profil = Profil.objects.get(id=pk)
     matkul = Matkul.objects.filter(profil = profil)
     pertemuan = profil.pertemuan.all()
     jumlah = pertemuan.count()
     terakhir = pertemuan.last()
+    pengajar = Pertemuan.objects.filter(pengajar = profilnama)
 
     context = {
         'profil':profil, 'pertemuan':pertemuan, 'jumlah':jumlah,
-        'terakhir':terakhir, 'matkul':matkul,
+        'terakhir':terakhir, 'matkul':matkul, 'pengajar':pengajar,
     }
-    return render(request, 'detailAkun.html', context)
+    return render(request, 'detailMatkul.html', context)
 
 @login_required(login_url='masuk')
 @allowed_users(allowed_roles=['akademik'])
@@ -191,32 +201,44 @@ def hapus_akun(request, pk):
 
 @login_required(login_url='masuk')
 @allowed_users(allowed_roles=['akademik'])
-def daftar(request):
+def tambahDosen(request):
     form = UserCreationForm()
 
     if request.method == 'POST':
         form = UserCreationForm(request.POST)
-        if form.is_valid():
-            user = form.save()
-            # nama = form.cleaned_data.get('username')
-            # messages.success(request, f'Akun { nama } berhasil dibuat')
-            group = Group.objects.get(name='dosen')
-            user.groups.add(group)
+        data = request.POST
+        user = User.objects.create_user(
+            username = data['username'],
+            password = data['password1']
+        )
+        user.first_name = data['nama_awal']
+        user.last_name = data['nama_akhir']
+        user.save() 
 
-            form = UserCreationForm()
-            return redirect('Dashboard')
-    else:
-        form = UserCreationForm()
+        group = Group.objects.get(name='dosen')
+        user.groups.add(group)
+
+        # if form.is_valid():
+        #     user = form.save()
+        #     # nama = form.cleaned_data.get('username')
+        #     # messages.success(request, f'Akun { nama } berhasil dibuat')
+        #     group = Group.objects.get(name='dosen')
+        #     user.groups.add(group)
+
+        #     form = UserCreationForm()
+        return redirect('Dashboard')
+    # else:
+    #     form = UserCreationForm()
 
     context={
-        "hal_daftar" : "active",
+        "hal_daftar" : "actives",
         'form' : form,
     }
-    return render(request, 'register.html', context)
+    return render(request, 'tambahDosen.html', context)
 
 @login_required(login_url='masuk')
 @allowed_users(allowed_roles=['akademik'])
-def dataAkun(request):
+def tambahMatkul(request):
 
     if request.method == 'POST':
         data = request.POST
@@ -224,6 +246,7 @@ def dataAkun(request):
             kode = data['kode'],
             nama = data['matkul'],
             ruang = data['ruang'],
+            hari = data['hari'],
             jadwal = data['jadwal'])
 
         profil.save()
@@ -231,7 +254,7 @@ def dataAkun(request):
         
     context={
     }
-    return render(request, 'data_akun.html', context)
+    return render(request, 'tambahMatkul.html', context)
 
 @login_required(login_url='masuk')
 @allowed_users(allowed_roles=['akademik'])
@@ -259,7 +282,7 @@ def daftarMahasiswa(request):
                 )
 
     context = {
-      "hal_daftarMahasiswa" : "active", 'mahasiswa':mahasiswa,
+      "hal_daftarMahasiswa" : "actives", 'mahasiswa':mahasiswa,
 
    }
     return render(request, 'mahasiswa.html', context)
@@ -321,7 +344,7 @@ def faceDetection(request):
     context={
         'form':form, 
         'videos':videos, 
-        'hal_upload' : 'active'
+        'hal_upload' : 'actives'
     }
     return render(request, 'video.html', context)
 
@@ -372,7 +395,7 @@ def presensi(request):
                     attendance = column[3]
                 )
     context={
-        'hal_presensi' : 'active', 'tersedia':tersedia, 'hapus':hapus,
+        'hal_presensi' : 'actives', 'tersedia':tersedia, 'hapus':hapus,
     }
     return  render(request, 'presensi.html', context  )
 
