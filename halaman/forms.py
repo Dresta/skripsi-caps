@@ -24,3 +24,4 @@ class MatkulForm(forms.ModelForm):
         widgets = {
             'user' : forms.Select(attrs={'class':'form-control'}),
             'profil' : forms.Select(attrs={'class':'form-control'})
+        }
