@@ -41,6 +41,7 @@ def keluar(request):
     logout(request)
     return redirect('masuk')
 
+
 def dashboardDosen(request):
 
     log_user = request.user
@@ -147,25 +148,20 @@ def tambahPengajar(request):
     profil = Profil.objects.all()
 
     if request.method == 'POST':
-    #     pengampuMatkul = MatkulForm (request.POST)
-    #     if pengampuMatkul.is_valid():
-    #         pengampuMatkul.save()
-    #         return redirect('Dashboard')
         data = request.POST
-        # akun = int()
         matkul = Matkul.objects.create(
             user_id = data['akun_dosen'],
             profil_id = data['matakuliah']
             )
         matkul.save()
         return redirect('Dashboard')
-        # pengampuMatkul = MatkulForm ()
     context = {
         'akun':akun, 'profil':profil, 
-        # 'pengampuMatkul':pengampuMatkul
     }
     return render (request, 'tambahPengajar.html', context)
 
+@login_required(login_url='masuk')
+@allowed_users(allowed_roles=['akademik'])
 def detailDosen(request, pk):
     akun = User.objects.get(id=pk)
     matkul = Matkul.objects.filter( user=akun )
@@ -217,18 +213,7 @@ def tambahDosen(request):
 
         group = Group.objects.get(name='dosen')
         user.groups.add(group)
-
-        # if form.is_valid():
-        #     user = form.save()
-        #     # nama = form.cleaned_data.get('username')
-        #     # messages.success(request, f'Akun { nama } berhasil dibuat')
-        #     group = Group.objects.get(name='dosen')
-        #     user.groups.add(group)
-
-        #     form = UserCreationForm()
         return redirect('Dashboard')
-    # else:
-    #     form = UserCreationForm()
 
     context={
         "hal_daftar" : "actives",
@@ -519,8 +504,6 @@ def script(request):
             cv2.imshow('Face Recognizer',img)
             #k = cv2.waitKey(30) & 0xff
             if cv2.waitKey(1) == ord('a'):
-            #num+=1
-            #if num>200:
                 cap.release()
                 sleep(4)
                 print('we are done!')

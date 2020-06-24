@@ -13,43 +13,14 @@
 {% block content %}
 <div class="card">
     <div class="card-body scrollable">
-    <center>
-        <form method="POST" enctype="multipart/form-data" class="uploadForm ">
-            {% csrf_token %}
-            <br> {{form|crispy}} <br>
-            <span class="fileLabel"> <p>format video .mp4</p> </span>
-            <button type="sumbit" class='btn btn-success btn-block'>lanjut</button>
-        </form>
-    </center>
-        
-{% comment %} 
-        <div>
-            <table class="col-md-12">
-                <tr>
-                    <th> Deskripsi Video
-                    </th>
-                    <th> Link Video
-                    </th>
-                    <th>
-                    </th>
-                </tr>
-                {% for video in videos%}
-                <tr>
-                    <td>
-                        {{video.deskripsi_video}}
-                    </td>
-                    <td>
-                        {{video.videofile.url}}
-                    </td>
-                    <td>
-                    <a href="{{video.videofile.url}}" class="btn btn-outline-primary"
-                    target="_blank"> lihat video</a>
-                    </td>
-                </tr>
-                {% endfor %}
-            </table>
-        </div>
-{% endcomment %}
+        <center>
+            <form method="POST" enctype="multipart/form-data" class="uploadForm ">
+                {% csrf_token %}
+                <br> {{form|crispy}} <br>
+                <span class="fileLabel"> <p>format video .mp4</p> </span>
+                <button type="sumbit" class='btn btn-success btn-block'>lanjut</button>
+            </form>
+        </center>
     </div>
 </div>
 {% endblock content %}

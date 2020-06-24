@@ -66,7 +66,6 @@ class Presensi(models.Model):
         return ' %s %s - %s' % (self.pertemuan.matkul.nama,  self.pertemuan.waktu_perkuliahan, self.mahasiswa.niu) 
 
 class Video(models.Model):
-    # deskripsi_video = models.CharField(max_length=500)
     videofile = models.FileField(upload_to='video/', null=True, verbose_name='')
     timestamp = models.DateTimeField(auto_now_add=True)
 
@@ -86,7 +85,6 @@ class UploadCSV(models.Model):
         return str(self.nim)
 
 class FileKehadiran(models.Model):
-    # deskripsi_file = models.CharField(max_length=500)
     fileKehadiran = models.FileField(upload_to='kehadiran/', null=True, verbose_name='')
     timestamp = models.DateTimeField(auto_now_add=True)
 

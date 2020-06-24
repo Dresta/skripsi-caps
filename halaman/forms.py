@@ -24,7 +24,3 @@ class MatkulForm(forms.ModelForm):
         widgets = {
             'user' : forms.Select(attrs={'class':'form-control'}),
             'profil' : forms.Select(attrs={'class':'form-control'})
-        }
-        # def __init__(self,matkul,*args,**kwargs):
-        #     super (MatkulForm,self ).__init__(*args,**kwargs) # populates the post
-        #     self.fields['user'].queryset = User.objects.filter(groups = 'dosen')
