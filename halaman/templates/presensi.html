@@ -16,7 +16,7 @@
     <div class="card-body"> <br>
     {% if tersedia > 0 %}
         <button type="button" class="btn btn-success open" style="float:right"
-        data-toggle="modal" data-target="#myModal" onclick='hapus()'> Upload Kehadiran </button>
+        data-toggle="modal" data-target="#myModal"> Upload Kehadiran </button>
 
         
         <!-- Modal -->
@@ -49,7 +49,6 @@
             <div><br>
                 <h6><strong> Pilih Pertemuan: </strong> </h6>
                 <select name="Pilihan" id="pertemuan" class=" form-control" style="margin-top: 1vh">
-                    <option value="">---Pilih Pertemuan---</option>
                 </select> 
             </div> <br>
             <div class="scrollable-md">
@@ -78,12 +77,12 @@
 {% block script %}
 <script src= "https://cdnjs.cloudflare.com/ajax/libs/axios/0.19.2/axios.min.js"></script>
 
-<script>
+{% comment %} <script>
 
 $(document).ready(function(){
     {{hapus}}
 });
-</script>
+</script> {% endcomment %}
 
 <script>
 //axios.defaults.xsrfCookieName = 'csrftoken';

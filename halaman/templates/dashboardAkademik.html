@@ -10,6 +10,7 @@
 
 {% block content %}
 <div class="card">
+
     <div class="card-body"> <br>
         <div class="btn-group mx-3" style="float:right;">
             <button type="button" class="btn btn-success dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -87,7 +88,7 @@
                             {% csrf_token %}
                                 <td><button class="btn btn-outline-primary"  style="float:right" type="submit" >Detail</button></td>
                             </form>
-                            <form  method="POST" action="{% url 'hapus_akun' profil.pk  %}">
+                            <form  method="POST" action="{% url 'hapus_matkul' profil.pk  %}">
                             {% csrf_token %}
                                 <td><button class="btn btn-outline-danger"  style="float:right" type="submit" >hapus</button></td>
                             </form>
@@ -102,4 +103,5 @@
 </div>
 {% endblock content %}
 {% block script %}
+
 {% endblock script %}

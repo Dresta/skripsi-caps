@@ -15,9 +15,9 @@ from .models import *
 from .forms import *
 from .serializers import *
 
-from django.core.serializers import serialize
 from rest_framework import viewsets
 from rest_framework.decorators import api_view
+from django.core.serializers import serialize
 
 
 # Create your views here.
@@ -78,6 +78,7 @@ def perkuliahan(request, idmatkul):
                 profil_id = profil_id,
                 pengajar = log_user,
                 )
+            messages.success(request, 'Pertemuan berhasil dilaksanakan')
 
     context = {
         'nama_matkul' : nama_matkul,
@@ -141,6 +142,53 @@ def dashboardAkademik(request):
 
 @login_required(login_url='masuk')
 @allowed_users(allowed_roles=['akademik'])
+def tambahMatkul(request):
+
+    if request.method == 'POST':
+        data = request.POST
+        profil = Profil.objects.create(
+            kode = data['kode'],
+            nama = data['matkul'],
+            ruang = data['ruang'],
+            hari = data['hari'],
+            jadwal = data['jadwal'])
+
+        profil.save()
+        messages.success(request, 'Mata kuliah telah berhasil dibuat')
+        return redirect('Dashboard')
+        
+    context={
+    }
+    return render(request, 'tambahMatkul.html', context)
+
+@login_required(login_url='masuk')
+@allowed_users(allowed_roles=['akademik'])
+def tambahDosen(request):
+    form = UserCreationForm()
+
+    if request.method == 'POST':
+        form = UserCreationForm(request.POST)
+        data = request.POST
+        user = User.objects.create_user(
+            username = data['username'],
+            password = data['password1']
+        )
+        user.first_name = data['nama_awal']
+        user.last_name = data['nama_akhir']
+        user.save() 
+        messages.success(request, 'Akun dosen telah berhasil dibuat')
+        group = Group.objects.get(name='dosen')
+        user.groups.add(group)
+        return redirect('Dashboard')
+
+    context={
+        "hal_daftar" : "actives",
+        'form' : form,
+    }
+    return render(request, 'tambahDosen.html', context)
+
+@login_required(login_url='masuk')
+@allowed_users(allowed_roles=['akademik'])
 def tambahPengajar(request):
     grup = Group.objects.get(name='akademik')
 
@@ -154,6 +202,7 @@ def tambahPengajar(request):
             profil_id = data['matakuliah']
             )
         matkul.save()
+        messages.success(request, 'Perkuliahan dapat dilakukan oleh username {0}' .format(matkul.user))
         return redirect('Dashboard')
     context = {
         'akun':akun, 'profil':profil, 
@@ -179,7 +228,7 @@ def detailMatkul(request, pk):
     pertemuan = profil.pertemuan.all()
     jumlah = pertemuan.count()
     terakhir = pertemuan.last()
-    pengajar = Pertemuan.objects.filter(pengajar = profilnama)
+    pengajar = Pertemuan.objects.filter(pengajar = profil)
 
     context = {
         'profil':profil, 'pertemuan':pertemuan, 'jumlah':jumlah,
@@ -191,55 +240,25 @@ def detailMatkul(request, pk):
 @allowed_users(allowed_roles=['akademik'])
 def hapus_akun(request, pk):
     if request.method == "POST":
+        user = User.objects.get(id = pk)
+        user.delete()
+    return redirect('Dashboard')
+
+@login_required(login_url='masuk')
+@allowed_users(allowed_roles=['akademik'])
+def hapus_matkul(request, pk):
+    if request.method == "POST":
         profil = Profil.objects.get(id = pk)
         profil.delete()
     return redirect('Dashboard')
 
 @login_required(login_url='masuk')
 @allowed_users(allowed_roles=['akademik'])
-def tambahDosen(request):
-    form = UserCreationForm()
-
-    if request.method == 'POST':
-        form = UserCreationForm(request.POST)
-        data = request.POST
-        user = User.objects.create_user(
-            username = data['username'],
-            password = data['password1']
-        )
-        user.first_name = data['nama_awal']
-        user.last_name = data['nama_akhir']
-        user.save() 
-
-        group = Group.objects.get(name='dosen')
-        user.groups.add(group)
-        return redirect('Dashboard')
-
-    context={
-        "hal_daftar" : "actives",
-        'form' : form,
-    }
-    return render(request, 'tambahDosen.html', context)
-
-@login_required(login_url='masuk')
-@allowed_users(allowed_roles=['akademik'])
-def tambahMatkul(request):
-
-    if request.method == 'POST':
-        data = request.POST
-        profil = Profil.objects.create(
-            kode = data['kode'],
-            nama = data['matkul'],
-            ruang = data['ruang'],
-            hari = data['hari'],
-            jadwal = data['jadwal'])
-
-        profil.save()
-        return redirect('Dashboard')
-        
-    context={
-    }
-    return render(request, 'tambahMatkul.html', context)
+def hapus_mahasiswa(request, niu):
+    if request.method == "POST":
+        mahasiswa = Mahasiswa.objects.get(niu = niu)
+        mahasiswa.delete()
+    return redirect('daftarMahasiswa')
 
 @login_required(login_url='masuk')
 @allowed_users(allowed_roles=['akademik'])
@@ -265,6 +284,7 @@ def daftarMahasiswa(request):
                     program_studi = column[3],
                     angkatan = column[4],
                 )
+            messages.success(request, 'Mahasiswa berhasil ditambahkan')
 
     context = {
       "hal_daftarMahasiswa" : "actives", 'mahasiswa':mahasiswa,
@@ -362,6 +382,7 @@ def presensi(request):
 
     if request.method == "POST":
         if "simpan" in request.POST:
+            messages.success(request, 'Presensi mahasiswa berhasil disimpan')
             return redirect('daftarMahasiswa')
         if "kehadiran" in request.POST:
             csv_file = request.FILES.get("file", None)

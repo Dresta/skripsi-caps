@@ -14,7 +14,6 @@ urlpatterns = [
     path('akademik/registrasi/pengajar/', views.tambahPengajar, name='tambahPengajar'),
     path('akademik/Dosen/<str:pk>', views.detailDosen, name='detailDosen'),
     path('akademik/matakuliah/<str:pk>', views.detailMatkul, name='detailMatkul'),
-    path('akademik/matakuliah/delete/<str:pk>', views.hapus_akun, name='hapus_akun'),
     path('akademik/mahasiswa/', views.daftarMahasiswa, name='daftarMahasiswa'),
     path('akademik/mahasiswa/<str:pk>', views.detailMahasiswa, name='detail'),
     path('akademik/mahasiswa/<str:niu>/<str:pk>', views.detailPerkuliahan, name='detailPerkuliahan'),
@@ -22,4 +21,8 @@ urlpatterns = [
     path('akademik/FaceDetection/', views.script, name='script'),
     path('akademik/video/', views.faceDetection, name='video'),
     path('akademik/upload/', views.uploadKehadiran, name='upload'),
+    
+    path('/akademik/dosen/delete/<str:pk>', views.hapus_akun, name='hapus_akun'),
+    path('/akademik/matakuliah/delete/<str:pk>', views.hapus_matkul, name='hapus_matkul'),
+    path('/akademik/mahasiswa/delete/<str:niu>', views.hapus_mahasiswa, name='hapus_mahasiswa'),
 ] 

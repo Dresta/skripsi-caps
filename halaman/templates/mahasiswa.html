@@ -51,6 +51,7 @@
                 <th>NIM Mahasiswa</th>
                 <th>Angkatan</th>
                 <th></th>    
+                <th></th>
                 
                 {% for kehadiran in mahasiswa %}
                 <tr style="margin-left: 2rem" >
@@ -58,6 +59,10 @@
                     <td>{{kehadiran.nim}}</td>
                     <td> {{kehadiran.angkatan}}</td>
                     <td><a class="btn btn-outline-info" href="{% url 'detail' kehadiran.niu %}">Detail</a></td>
+                    <form  method="POST" action="{% url 'hapus_mahasiswa' kehadiran.niu %}">
+                        {% csrf_token %}
+                        <td><button class="btn btn-outline-danger" type="submit" >hapus</button></td>
+                    </form>
                 </tr>
                 {% endfor %}
             </table>

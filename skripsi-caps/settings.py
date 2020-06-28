@@ -14,6 +14,9 @@ import os
 
 from corsheaders.defaults import default_headers
 
+from django.contrib.messages import constants as messages
+
+
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
@@ -151,3 +154,11 @@ CRISPY_TEMPLATE_PACK = 'uni_form'
 CORS_ALLOW_HEADERS = list(default_headers) + [
     'X-CSRFToken',
 ]
+
+MESSAGE_TAGS = {
+    messages.DEBUG: 'alert-info',
+    messages.INFO: 'alert-info',
+    messages.SUCCESS: 'alert-success',
+    messages.WARNING: 'alert-warning',
+    messages.ERROR: 'alert-danger',
+}
