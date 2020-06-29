@@ -508,8 +508,8 @@ def script(request):
             print('label:',label)
             print('confidence:',confidence)
             predicted_name = names[label]
-            if confidence < 90:
-                confidence = round(confidence)
+            if confidence < 120:
+                confidence = 100 - round(confidence)/3
                 cv2.putText(img, predicted_name +str(confidence) +'%', (x+2,y+h-4), cv2.FONT_HERSHEY_SIMPLEX, 1, (150,255,0),2)
                 labels.append(label)
                 students.append(names[label])
@@ -520,6 +520,14 @@ def script(request):
                     if labels.count(i)>10:
                         markPresent(names[label])
                         csv_to_json()
+            else:
+                confidence = 100 - round(confidence) / 2
+                cv2.putText(img, "unknown" , (x+2,y+h-4), cv2.FONT_HERSHEY_SIMPLEX, 1, (150,255,0),2)
+                labels.append(label)
+                students.append(names[label])
+                totalstudents = set(students)
+                justlabels = set(labels)
+                print('student Recognised : ',totalstudents,justlabels)
             
     
             cv2.imshow('Face Recognizer',img)
