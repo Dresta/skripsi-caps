@@ -169,8 +169,15 @@ def tambahDosen(request):
     if request.method == 'POST':
         form = UserCreationForm(request.POST)
         data = request.POST
-        if data['password1'] == data['password2']:
-
+        
+        if data['password1'] != data['password2']:
+            messages.warning(request, 'Password tidak sesuai')
+            return redirect('tambahDosen')
+            
+        elif data['username'] == data['password1']:
+            messages.warning(request, 'Username dan password tidak boleh sama')
+            return redirect('tambahDosen')
+        else:
             user = User.objects.create_user(
                 username = data['username'],
                 password = data['password1'],
@@ -182,9 +189,6 @@ def tambahDosen(request):
             group = Group.objects.get(name='dosen')
             user.groups.add(group)
             return redirect('Dashboard')
-        else:
-            messages.warning(request, 'Password tidak sesuai')
-            return redirect('tambahDosen')
 
     context={
         "hal_daftar" : "actives",
