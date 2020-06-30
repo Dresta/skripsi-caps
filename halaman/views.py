@@ -174,7 +174,6 @@ def tambahDosen(request):
             user = User.objects.create_user(
                 username = data['username'],
                 password = data['password1'],
-                # password = data['password2'],
             )
             user.first_name = data['nama_awal']
             user.last_name = data['nama_akhir']
