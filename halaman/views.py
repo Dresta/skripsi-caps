@@ -169,17 +169,23 @@ def tambahDosen(request):
     if request.method == 'POST':
         form = UserCreationForm(request.POST)
         data = request.POST
-        user = User.objects.create_user(
-            username = data['username'],
-            password = data['password1']
-        )
-        user.first_name = data['nama_awal']
-        user.last_name = data['nama_akhir']
-        user.save() 
-        messages.success(request, 'Akun dosen telah berhasil dibuat')
-        group = Group.objects.get(name='dosen')
-        user.groups.add(group)
-        return redirect('Dashboard')
+        if data['password1'] == data['password2']:
+
+            user = User.objects.create_user(
+                username = data['username'],
+                password = data['password1'],
+                # password = data['password2'],
+            )
+            user.first_name = data['nama_awal']
+            user.last_name = data['nama_akhir']
+            user.save() 
+            messages.success(request, 'Akun dosen telah berhasil dibuat')
+            group = Group.objects.get(name='dosen')
+            user.groups.add(group)
+            return redirect('Dashboard')
+        else:
+            messages.warning(request, 'Password tidak sesuai')
+            return redirect('tambahDosen')
 
     context={
         "hal_daftar" : "actives",
