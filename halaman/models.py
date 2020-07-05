@@ -13,10 +13,10 @@ class Profil(models.Model):
         ('Kamis', 'Kamis'),
         ('Jumat', 'Jumat'),
     )
-    kode = models.CharField(max_length=100)
-    nama = models.CharField(max_length=100)
+    kode = models.CharField(max_length=20)
+    nama = models.CharField(max_length=50)
     ruang = models.CharField(max_length=6)
-    hari = models.CharField(choices=HARI, max_length=100)
+    hari = models.CharField(choices=HARI, max_length=6)
     jadwal = models.TimeField()
 
     def __str__(self):
@@ -39,9 +39,9 @@ class Mahasiswa(models.Model):
         ('Teknik Biomedis', 'Teknik Biomedis'),
     )
     niu = models.IntegerField(primary_key=True)
-    nim = models.CharField(max_length=100)
-    nama = models.CharField(max_length=100)
-    program_studi = models.CharField(choices=PRODI, max_length=100)
+    nim = models.CharField(max_length=18)
+    nama = models.CharField(max_length=30)
+    program_studi = models.CharField(choices=PRODI, max_length=20)
     angkatan = models.IntegerField(default=2016)
 
     def __str__(self):
@@ -49,7 +49,7 @@ class Mahasiswa(models.Model):
 
 class Pertemuan(models.Model):
     profil = models.ForeignKey(Profil, on_delete=models.CASCADE, related_name='pertemuan')
-    pengajar = models.CharField(max_length=100)
+    pengajar = models.CharField(max_length=6)
     tanggal_perkuliahan = models.DateField(auto_now_add=True, blank=True)
     waktu_perkuliahan = models.TimeField(auto_now_add=True, blank=True)
     simpan = models.BooleanField(default=0)
@@ -60,10 +60,10 @@ class Pertemuan(models.Model):
 class Presensi(models.Model):
     pertemuan = models.ForeignKey(Pertemuan, on_delete=models.CASCADE)
     mahasiswa = models.ForeignKey(Mahasiswa, on_delete=models.CASCADE)
-    status = models.CharField(max_length=10, blank=True)
+    status = models.CharField(max_length=2, blank=True)
 
     def __str__(self):
-        return ' %s %s - %s' % (self.pertemuan.matkul.nama,  self.pertemuan.waktu_perkuliahan, self.mahasiswa.niu) 
+        return ' %s %s - %s' % (self.pertemuan.profil.nama,  self.pertemuan.waktu_perkuliahan, self.mahasiswa.niu) 
 
 class Video(models.Model):
     videofile = models.FileField(upload_to='video/', null=True, verbose_name='')
@@ -77,7 +77,7 @@ class Video(models.Model):
 
 class UploadCSV(models.Model):
     nomor = models.IntegerField()
-    nama = models.CharField(max_length = 100)
+    nama = models.CharField(max_length = 30)
     nim = models.IntegerField(primary_key=True)
     attendance = models.IntegerField(blank=True)
 
