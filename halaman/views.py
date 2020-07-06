@@ -45,7 +45,7 @@ def keluar(request):
 def dashboardDosen(request):
 
     log_user = request.user
-    matkul = Matkul.objects.filter( user_id = log_user )
+    matkul = Perkuliahan.objects.filter( user_id = log_user )
 
     if request.user.is_staff:
         return redirect('Dashboard')
@@ -62,20 +62,20 @@ def dashboardDosen(request):
 def perkuliahan(request, idmatkul):
 
     log_user = request.user
-    matkul = Matkul.objects.get(id = idmatkul)
+    matkul = Perkuliahan.objects.get(id = idmatkul)
 
-    nama_matkul = matkul.profil
-    pertemuan = Pertemuan.objects.filter(profil__nama = nama_matkul)
-    profil = Profil.objects.all()
+    nama_matkul = matkul.matkul
+    pertemuan = Pertemuan.objects.filter(matkul__nama = nama_matkul)
+    profil = Matkul.objects.all()
 
-    jumlah = Pertemuan.objects.filter(profil__nama = nama_matkul).count
+    jumlah = Pertemuan.objects.filter(matkul__nama = nama_matkul).count
 
     if request.method == "POST": 
         if 'mulai_kuliah' in request.POST:   
             data = request.POST
-            profil_id = matkul.profil.id
+            profil_id = matkul.matkul.id
             pertemuan = Pertemuan.objects.create(
-                profil_id = profil_id,
+                matkul_id = profil_id,
                 pengajar = log_user,
                 )
             messages.success(request, 'Pertemuan berhasil dilaksanakan')
@@ -93,10 +93,10 @@ def perkuliahan(request, idmatkul):
 @login_required(login_url='masuk')
 @allowed_users(allowed_roles=['dosen'])
 def rekap(request, idmatkul):
-    matkul = Matkul.objects.get(id = idmatkul)
+    matkul = Perkuliahan.objects.get(id = idmatkul)
 
-    nama_matkul = matkul.profil
-    pertemuan = Pertemuan.objects.filter(profil__nama = nama_matkul)
+    nama_matkul = matkul.matkul
+    pertemuan = Pertemuan.objects.filter(matkul__nama = nama_matkul)
 
     presensi = Presensi.objects.all()
 
@@ -111,7 +111,7 @@ def rekap(request, idmatkul):
 @login_required(login_url='masuk')
 @allowed_users(allowed_roles=['dosen'])
 def detailRekap(request, idmatkul, pk):
-    matkul = Matkul.objects.get(id = idmatkul)
+    matkul = Perkuliahan.objects.get(id = idmatkul)
     pertemuan = Pertemuan.objects.get(id = pk)
     presensi = Presensi.objects.filter(pertemuan_id = pk)
     
@@ -131,8 +131,8 @@ def dashboardAkademik(request):
     grup = Group.objects.get(name='dosen')
     grupDosen = User.objects.filter(groups = grup)
     
-    matkul = Matkul.objects.filter(user__in = grupDosen)
-    profil = Profil.objects.all()
+    matkul = Perkuliahan.objects.filter(user__in = grupDosen)
+    profil = Matkul.objects.all()
     
     context = {
         'matkul' : matkul , 'profil' : profil, 'dosen': grupDosen, 
@@ -146,7 +146,7 @@ def tambahMatkul(request):
 
     if request.method == 'POST':
         data = request.POST
-        profil = Profil.objects.create(
+        profil = Matkul.objects.create(
             kode = data['kode'],
             nama = data['matkul'],
             ruang = data['ruang'],
@@ -202,13 +202,13 @@ def tambahPengajar(request):
     grup = Group.objects.get(name='akademik')
 
     akun = User.objects.exclude(groups = grup)
-    profil = Profil.objects.all()
+    profil = Matkul.objects.all()
 
     if request.method == 'POST':
         data = request.POST
-        matkul = Matkul.objects.create(
+        matkul = Perkuliahan.objects.create(
             user_id = data['akun_dosen'],
-            profil_id = data['matakuliah']
+            matkul_id = data['matakuliah']
             )
         matkul.save()
         messages.success(request, 'Perkuliahan dapat dilakukan oleh username {0}' .format(matkul.user))
@@ -222,7 +222,7 @@ def tambahPengajar(request):
 @allowed_users(allowed_roles=['akademik'])
 def detailDosen(request, pk):
     akun = User.objects.get(id=pk)
-    matkul = Matkul.objects.filter( user=akun )
+    matkul = Perkuliahan.objects.filter( user=akun )
 
     context={
         'akun':akun, 'matkul':matkul,
@@ -232,8 +232,8 @@ def detailDosen(request, pk):
 @login_required(login_url='masuk')
 @allowed_users(allowed_roles=['akademik'])
 def detailMatkul(request, pk):
-    profil = Profil.objects.get(id=pk)
-    matkul = Matkul.objects.filter(profil = profil)
+    profil = Matkul.objects.get(id=pk)
+    matkul = Perkuliahan.objects.filter(matkul = profil)
     pertemuan = profil.pertemuan.all()
     jumlah = pertemuan.count()
     terakhir = pertemuan.last()
@@ -257,7 +257,7 @@ def hapus_akun(request, pk):
 @allowed_users(allowed_roles=['akademik'])
 def hapus_matkul(request, pk):
     if request.method == "POST":
-        profil = Profil.objects.get(id = pk)
+        profil = Matkul.objects.get(id = pk)
         profil.delete()
     return redirect('Dashboard')
 
@@ -305,15 +305,15 @@ def daftarMahasiswa(request):
 @allowed_users(allowed_roles=['akademik'])
 def detailMahasiswa(request, pk):
 
-    profil = Profil.objects.all()
-    list_pertemuan = Pertemuan.objects.filter(profil__in =profil)
+    profil = Matkul.objects.all()
+    list_pertemuan = Pertemuan.objects.filter(matkul__in =profil)
     kehadiran = Presensi.objects.filter(pertemuan__in=list_pertemuan)
 
     mahasiswa = Mahasiswa.objects.get(niu=pk)
     listPresensi = mahasiswa.presensi_set.all()
 
-    selectedId = mahasiswa.presensi_set.values_list('pertemuan__profil', flat=True).distinct()
-    matkul = Profil.objects.filter(id__in = selectedId)
+    selectedId = mahasiswa.presensi_set.values_list('pertemuan__matkul', flat=True).distinct()
+    matkul = Matkul.objects.filter(id__in = selectedId)
     presensi = Presensi.objects.filter(mahasiswa = pk)
 
     context = {
@@ -327,9 +327,9 @@ def detailMahasiswa(request, pk):
 def detailPerkuliahan(request, niu, pk):
     mahasiswa = Mahasiswa.objects.get(niu=niu)
 
-    profil = Profil.objects.get(id = pk)
+    profil = Matkul.objects.get(id = pk)
 
-    presensi = Presensi.objects.filter(pertemuan__profil__id = pk).filter(mahasiswa = niu)
+    presensi = Presensi.objects.filter(pertemuan__matkul__id = pk).filter(mahasiswa = niu)
     jumlah = presensi.count()
     kehadiran = presensi.filter(status = 1).count()
     terakhir = presensi.filter(status = 1).last()
@@ -365,7 +365,7 @@ def faceDetection(request):
 @login_required(login_url='masuk')
 @allowed_users(allowed_roles=['akademik'])
 def uploadKehadiran(request):
-    hapus = UploadCSV.objects.all().delete()
+    hapus = Dummy.objects.all().delete()
     kehadiran = FileKehadiran.objects.all()
     if request.method == "POST":
         if 'fileKehadiran' in request.POST:
@@ -387,7 +387,7 @@ def presensi(request):
     pertemuan = Pertemuan.objects.all()
     tersedia = pertemuan.filter(simpan = 0).count() 
     
-    hapus = UploadCSV.objects.all().delete()
+    hapus = Dummy.objects.all().delete()
 
     if request.method == "POST":
         if "simpan" in request.POST:
@@ -403,7 +403,7 @@ def presensi(request):
             io_string = io.StringIO(data_set)
             next(io_string)
             for column in csv.reader(io_string, delimiter=",", quotechar="|"):
-                _, created = UploadCSV.objects.get_or_create(
+                _, created = Dummy.objects.get_or_create(
                     nomor = column[0],
                     nama = column[1],
                     nim = column[2],
@@ -564,20 +564,20 @@ class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all().order_by('date_joined')
     serializer_class = UserSerializer
 
-class ProfilViewSet(viewsets.ModelViewSet):
-    queryset = Profil.objects.all().order_by('id')
-    serializer_class = ProfilSerializer
-
 class MatkulViewSet(viewsets.ModelViewSet):
     queryset = Matkul.objects.all().order_by('id')
     serializer_class = MatkulSerializer
+
+class PerkuliahanViewSet(viewsets.ModelViewSet):
+    queryset = Perkuliahan.objects.all().order_by('id')
+    serializer_class = PerkuliahanSerializer
 
 class MahasiswaViewSet(viewsets.ModelViewSet):
     queryset = Mahasiswa.objects.all().order_by('niu')
     serializer_class = MahasiswaSerializer
 
 class PertemuanViewSet(viewsets.ModelViewSet):
-    queryset = Pertemuan.objects.all().order_by('profil')
+    queryset = Pertemuan.objects.all().order_by('matkul')
     serializer_class = PertemuanSerializer
 
 class PresensiViewSet(viewsets.ModelViewSet):
@@ -592,6 +592,6 @@ class FileKehadiranViewSet(viewsets.ModelViewSet):
     queryset = FileKehadiran.objects.all().order_by('timestamp')
     serializer_class = FileKehadiranSerializer
 
-class UploadCSVViewSet(viewsets.ModelViewSet):
-    queryset = UploadCSV.objects.all()
-    serializer_class = UploadCSVSerializer
+class DummyViewSet(viewsets.ModelViewSet):
+    queryset = Dummy.objects.all()
+    serializer_class = DummySerializer

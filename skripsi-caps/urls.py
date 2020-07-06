@@ -25,14 +25,14 @@ from rest_framework import routers
 
 router = routers.DefaultRouter()
 router.register('users', UserViewSet)
-router.register('profil', ProfilViewSet)
-router.register('mahasiswa', MahasiswaViewSet)
 router.register('matkul', MatkulViewSet)
+router.register('mahasiswa', MahasiswaViewSet)
+router.register('perkuliahan', PerkuliahanViewSet)
 router.register('pertemuan', PertemuanViewSet)
 router.register('presensi', PresensiViewSet)
 router.register('video', VideoViewSet)
 router.register('FileKehadiran', FileKehadiranViewSet)
-router.register('upload', UploadCSVViewSet)
+router.register('dummy', DummyViewSet)
 
 
 urlpatterns = [

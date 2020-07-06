@@ -5,7 +5,7 @@ from django.db.models import F, Max
 from django.contrib.auth.models import User
 
 # Create your models here.
-class Profil(models.Model):
+class Matkul(models.Model):
     HARI=(
         ('Senin', 'Senin'),
         ('Selasa', 'Selasa'),
@@ -22,15 +22,15 @@ class Profil(models.Model):
     def __str__(self):
         return self.nama
 
-class Matkul(models.Model):
+class Perkuliahan(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='user')
-    profil = models.ForeignKey(Profil, on_delete=models.CASCADE, related_name='profil')
+    matkul = models.ForeignKey(Matkul, on_delete=models.CASCADE, related_name='profil')
 
     class Meta:
-        ordering = ['profil']
+        ordering = ['matkul']
 
     def __str__(self):
-        return self.profil.nama + ' - ' + self.user.username
+        return self.matkul.nama + ' - ' + self.user.username
 
 class Mahasiswa(models.Model):
     PRODI=(
@@ -48,14 +48,14 @@ class Mahasiswa(models.Model):
         return ' %s - %s' % ( self.niu, self.nama)
 
 class Pertemuan(models.Model):
-    profil = models.ForeignKey(Profil, on_delete=models.CASCADE, related_name='pertemuan')
+    matkul = models.ForeignKey(Matkul, on_delete=models.CASCADE, related_name='pertemuan')
     pengajar = models.CharField(max_length=6)
     tanggal_perkuliahan = models.DateField(auto_now_add=True, blank=True)
     waktu_perkuliahan = models.TimeField(auto_now_add=True, blank=True)
     simpan = models.BooleanField(default=0)
 
     def __str__(self):
-        return 'id pertemuan %s mata kuliah %s'  % (self.id , self.profil.nama)
+        return 'id pertemuan %s mata kuliah %s'  % (self.id , self.matkul.nama)
 
 class Presensi(models.Model):
     pertemuan = models.ForeignKey(Pertemuan, on_delete=models.CASCADE)
@@ -63,7 +63,7 @@ class Presensi(models.Model):
     status = models.CharField(max_length=2, blank=True)
 
     def __str__(self):
-        return ' %s %s - %s' % (self.pertemuan.profil.nama,  self.pertemuan.waktu_perkuliahan, self.mahasiswa.niu) 
+        return ' %s %s - %s' % (self.pertemuan.matkul.nama,  self.pertemuan.waktu_perkuliahan, self.mahasiswa.niu) 
 
 class Video(models.Model):
     videofile = models.FileField(upload_to='video/', null=True, verbose_name='')
@@ -75,7 +75,7 @@ class Video(models.Model):
     def __str__(self):
         return self.videofile.name
 
-class UploadCSV(models.Model):
+class Dummy(models.Model):
     nomor = models.IntegerField()
     nama = models.CharField(max_length = 30)
     nim = models.IntegerField(primary_key=True)

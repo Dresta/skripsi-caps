@@ -7,15 +7,15 @@ class UserSerializer(serializers.ModelSerializer):
         model = User
         fields = ['id', 'url', 'username', 'groups']
 
-class ProfilSerializer(serializers.HyperlinkedModelSerializer):
-    class Meta:
-        model = Profil
-        fields = ['id', 'kode', 'nama', 'ruang']
-
 class MatkulSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Matkul
-        fields = ['id', 'user', 'profil']
+        fields = ['id', 'kode', 'nama', 'ruang']
+
+class PerkuliahanSerializer(serializers.HyperlinkedModelSerializer):
+    class Meta:
+        model = Perkuliahan
+        fields = ['id', 'user', 'matkul']
 
 class MahasiswaSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
@@ -24,14 +24,14 @@ class MahasiswaSerializer(serializers.HyperlinkedModelSerializer):
 
 
 class PertemuanSerializer(serializers.ModelSerializer):
-    profil = serializers.SerializerMethodField('get_profil_name')
+    matkul = serializers.SerializerMethodField('get_matkul_name')
     class Meta:
         model = Pertemuan
-        fields = ['url', 'id', 'profil', 'waktu_perkuliahan', 'tanggal_perkuliahan', 'simpan',]
+        fields = ['url', 'id', 'matkul', 'waktu_perkuliahan', 'tanggal_perkuliahan', 'simpan',]
 
 
-    def get_profil_name(self, obj):
-        return obj.profil.nama
+    def get_matkul_name(self, obj):
+        return obj.matkul.nama
 
 
 class PresensiSerializer(serializers.ModelSerializer):
@@ -49,8 +49,8 @@ class FileKehadiranSerializer(serializers.HyperlinkedModelSerializer):
         model = FileKehadiran
         fields = "__all__"
 
-class UploadCSVSerializer(serializers.HyperlinkedModelSerializer):
+class DummySerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
-        model = UploadCSV
+        model = Dummy
         fields = ['url', 'nim', 'nomor', 'nama', 'attendance']
         

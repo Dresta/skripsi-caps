@@ -83,7 +83,7 @@
 
 
 let one ="http://127.0.0.1:8000/api/mahasiswa/";
-let two ="http://127.0.0.1:8000/api/upload/";
+let two ="http://127.0.0.1:8000/api/dummy/";
 let three ='http://127.0.0.1:8000/api/pertemuan/';
 
 const requestOne = axios.get(one);
@@ -167,7 +167,7 @@ function tampilkanPertemuan(element){
 
     var option = document.createElement("option");
     option.setAttribute("value", element.id);
-    option.text = element.profil + ' - ' + element.tanggal_perkuliahan + ' | ' + element.waktu_perkuliahan;
+    option.text = element.matkul + ' - ' + element.tanggal_perkuliahan + ' | ' + element.waktu_perkuliahan;
     selectList.appendChild(option);
 }
 
